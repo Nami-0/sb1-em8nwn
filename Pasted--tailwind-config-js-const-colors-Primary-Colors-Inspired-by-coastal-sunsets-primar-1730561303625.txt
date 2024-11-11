@@ -1,0 +1,103 @@
+// tailwind.config.js
+const colors = {
+  // Primary Colors - Inspired by coastal sunsets
+  primary: {
+    50: '#FFF1E5',
+    100: '#FFE4CC',
+    200: '#FFD1A8',
+    300: '#FFB77A',
+    400: '#FF9D4D',
+    500: '#FF8420', // Main brand color - vibrant sunset orange
+    600: '#E66B00',
+    700: '#B35300',
+    800: '#803C00',
+    900: '#4D2400',
+  },
+  
+  // Secondary Colors - Ocean-inspired teals
+  secondary: {
+    50: '#E6F9F9',
+    100: '#CCF3F3',
+    200: '#99E8E8',
+    300: '#66DCDC',
+    400: '#33D1D1',
+    500: '#00C5C5', // Accent color - deep teal
+    600: '#009E9E',
+    700: '#007777',
+    800: '#005151',
+    900: '#002A2A',
+  },
+  
+  // Neutral Colors - Sophisticated grays with slight warm undertone
+  neutral: {
+    50: '#F9F8F6',
+    100: '#F3F1ED',
+    200: '#E8E4DB',
+    300: '#D9D2C5',
+    400: '#C7BCА8',
+    500: '#B5A68C',
+    600: '#9A8A6F',
+    700: '#7D6E54',
+    800: '#5F523D',
+    900: '#413626',
+  },
+
+  // Light Mode Background Variations
+  light: {
+    background: '#FFFFFF',
+    surface: '#F9F8F6',
+    card: '#FFFFFF',
+    border: '#E8E4DB',
+    text: {
+      primary: '#2D2D2D',
+      secondary: '#666666',
+      tertiary: '#999999',
+    },
+  },
+
+  // Dark Mode Background Variations
+  dark: {
+    background: '#1A1A1E',
+    surface: '#222228',
+    card: '#2A2A32',
+    border: '#383842',
+    text: {
+      primary: '#F3F1ED',
+      secondary: '#B5A68C',
+      tertiary: '#7D6E54',
+    },
+  },
+
+  // Accent Colors for Features/Categories
+  accent: {
+    adventure: '#FF6B6B',    // Energetic red for adventure activities
+    luxury: '#CFB53B',       // Sophisticated gold for luxury experiences
+    eco: '#4CAF50',         // Natural green for eco-tourism
+    cultural: '#9C27B0',    // Rich purple for cultural experiences
+    beach: '#03A9F4',       // Ocean blue for beach destinations
+    urban: '#607D8B',       // Cool gray for city experiences
+  },
+
+  // Status Colors
+  status: {
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
+    info: '#3B82F6',
+  },
+}
+
+module.exports = {
+  theme: {
+    extend: {
+      colors: colors,
+      // Custom gradient presets
+      backgroundImage: {
+        'sunset-gradient': 'linear-gradient(to right, var(--tw-colors-primary-500), var(--tw-colors-secondary-500))',
+        'dark-gradient': 'linear-gradient(to bottom, var(--tw-colors-dark-background), var(--tw-colors-dark-surface))',
+        'adventure-gradient': 'linear-gradient(135deg, var(--tw-colors-accent-adventure), var(--tw-colors-primary-500))',
+        'luxury-gradient': 'linear-gradient(135deg, var(--tw-colors-accent-luxury), var(--tw-colors-secondary-500))',
+      },
+    },
+  },
+}

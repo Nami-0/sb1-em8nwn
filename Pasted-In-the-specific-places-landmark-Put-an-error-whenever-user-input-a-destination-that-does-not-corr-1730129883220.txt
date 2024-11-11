@@ -1,0 +1,62 @@
+In the specific places/landmark
+
+Put an error whenever user input a destination that does not correlate with the places or landmarks.
+Example: if user choose Japan but choose the landmarks of eiffel tower that are no way located in Paris, put an error and unable to generate the itenrary
+
+AI
+AI
+just now
+To implement this feature, we'll need to perform a validation check when the user submits the form. Specifically, we will compare the destination chosen with the specific locations or landmarks to ensure consistency. If there is a mismatch, we should display an error message and prevent itinerary generation. Here's how we can achieve this:
+
+Update the Validation Logic in views.py:
+
+Add a new validation check before generating the itinerary. This will involve comparing the selected destination with a list of valid landmarks or places corresponding to that destination.
+
+Define Valid Locations for Each Destination:
+
+Create a dictionary or similar data structure to map each destination to its valid landmarks or places.
+
+Here's how you can implement these changes:
+
+# views.py
+@main_views.route('/itinerary', methods=['GET', 'POST'])
+def itinerary_form():
+    form = ItineraryForm()
+    openai_api_available = is_openai_available()
+    # Dictionary to map destinations to valid specific locations/landmarks
+    valid_locations = {
+        'japan': ['Tokyo Tower', 'Mount Fuji', 'Kyoto Temple'],
+        'france': ['Eiffel Tower', 'Louvre Museum', 'Notre Dame Cathedral'],
+        # Add other destinations and their valid locations here
+    }
+    if form.validate_on_submit():
+        selected_destination = form.destinations.data
+        selected_locations = form.specific_locations.data.strip().split(',')
+        # Validate that the selected specific locations match the destination
+        if selected_destination in valid_locations:
+            for location in selected_locations:
+                if location.strip() not in valid_locations[selected_destination]:
+                    flash(f'The location "{location.strip()}" is not valid for the selected destination "{selected_destination}".', 'danger')
+                    return redirect(url_for('main_views.itinerary_form'))
+        if not openai_api_available:
+            flash('Cannot generate itinerary at this time. The service is temporarily unavailable.', 'danger')
+            return redirect(url_for('main_views.itinerary_form'))
+        
+        # Add exception handling and itinerary generation logic here
+        try:
+            if not form.travel_focus.data:
+                flash('Please select at least one travel focus.', 'danger')
+                return redirect(url_for('main_views.itinerary_form'))
+            
+            content = generate_itinerary(form)
+            # Database saving logic here
+            return render_template('itinerary_result.html', itinerary=itinerary)
+        except Exception as e:
+            flash(str(e), 'danger')
+            return redirect(url_for('main_views.itinerary_form'))
+            
+    return render_template('itinerary_form.html', form=form, openai_api_available=openai_api_available)
+Key Points:
+Validation Logic: We use a dictionary valid_locations to map each destination to its allowed places/landmarks. We then perform a check to see if each provided specific location is valid for the chosen destination.
+Feedback to User: If a mismatch is found, we flash an error message to the user and redirect them back to the itinerary form.
+This logic will ensure that users specify only those locations which are appropriate for their selected destination, helping maintain the relevance and accuracy of generated itineraries.

@@ -1,0 +1,562 @@
+# Replit
+
+# Travel Buddy: MY - Development Guide
+
+## Project Overview
+
+Travel Buddy: MY is a React Native mobile application designed to help Malaysian travelers create AI-powered itineraries, find accommodations, and track flights. The app emphasizes Malaysian cultural elements with a modern, minimalistic design.
+
+## Tech Stack
+
+- Frontend: React Native
+- Backend: Node.js with Express
+- Database: MongoDB
+- Authentication: Firebase
+- AI Integration: OpenAI API
+- Cloud Services: Google Cloud Platform
+- State Management: Redux Toolkit
+- Navigation: React Navigation 6
+- UI Components: React Native Paper
+
+## Project Structure
+
+```
+travel-buddy-my/
+├── app/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── screens/
+│   │   ├── navigation/
+│   │   ├── services/
+│   │   ├── store/
+│   │   ├── themes/
+│   │   └── utils/
+│   ├── android/
+│   └── ios/
+└── backend/
+    ├── src/
+    │   ├── controllers/
+    │   ├── models/
+    │   ├── routes/
+    │   ├── services/
+    │   └── utils/
+    └── tests/
+
+```
+
+## Setup Instructions
+
+### 1. Initial Setup
+
+```bash
+# Create new React Native project
+npx react-native init TravelBuddyMY
+
+# Navigate to project directory
+cd TravelBuddyMY
+
+# Install required dependencies
+npm install @react-navigation/native @react-navigation/stack @reduxjs/toolkit react-redux @react-native-firebase/app @react-native-firebase/auth react-native-paper @react-native-async-storage/async-storage axios react-native-maps react-native-vector-icons react-native-reanimated
+
+# Install dev dependencies
+npm install -D @babel/core @babel/runtime @react-native-community/eslint-config jest babel-jest
+
+```
+
+### 2. Environment Configuration
+
+Create a `.env` file in the root directory:
+
+```
+OPENAI_API_KEY=your_openai_api_key
+FIREBASE_API_KEY=your_firebase_api_key
+FIREBASE_AUTH_DOMAIN=your_auth_domain
+FIREBASE_PROJECT_ID=your_project_id
+FIREBASE_STORAGE_BUCKET=your_storage_bucket
+FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+FIREBASE_APP_ID=your_app_id
+MONGODB_URI=your_mongodb_uri
+
+```
+
+### 3. Firebase Setup
+
+```jsx
+// src/config/firebase.js
+import { initializeApp } from '@react-native-firebase/app';
+
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.FIREBASE_APP_ID
+};
+
+export const initializeFirebase = () => initializeApp(firebaseConfig);
+
+```
+
+## Core Components Implementation
+
+### 1. Authentication Screen
+
+```jsx
+// src/screens/AuthScreen.js
+import React, { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { Button, TextInput, Text } from 'react-native-paper';
+import auth from '@react-native-firebase/auth';
+
+export const AuthScreen = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const { idToken } = await GoogleSignin.signIn();
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      await auth().signInWithCredential(googleCredential);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        label="Email"
+        value={email}
+        onChangeText={setEmail}
+        mode="outlined"
+      />
+      <TextInput
+        label="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        mode="outlined"
+      />
+      <Button mode="contained" onPress={handleGoogleSignIn}>
+        Sign in with Google
+      </Button>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+});
+
+```
+
+### 2. Itinerary Generator Screen
+
+```jsx
+// src/screens/ItineraryGenerator.js
+import React, { useState } from 'react';
+import { View, ScrollView, StyleSheet } from 'react-native';
+import { TextInput, Button, Chip, Card } from 'react-native-paper';
+import { generateItinerary } from '../services/openai';
+
+export const ItineraryGenerator = () => {
+  const [preferences, setPreferences] = useState({
+    focus: [],
+    budget: '',
+    people: '',
+    accommodation: '',
+    needGuide: false,
+    dates: null,
+  });
+
+  const handleGenerateItinerary = async () => {
+    try {
+      const itinerary = await generateItinerary(preferences);
+      // Handle the generated itinerary
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  return (
+    <ScrollView style={styles.container}>
+      <Card>
+        <Card.Content>
+          <TextInput
+            label="Budget (MYR)"
+            value={preferences.budget}
+            onChangeText={(text) => setPreferences({...preferences, budget: text})}
+            keyboardType="numeric"
+            mode="outlined"
+          />
+          {/* Add other preference inputs */}
+        </Card.Content>
+      </Card>
+      <Button mode="contained" onPress={handleGenerateItinerary}>
+        Generate Itinerary
+      </Button>
+    </ScrollView>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+});
+
+```
+
+### 3. Redux Store Setup
+
+```jsx
+// src/store/index.js
+import { configureStore } from '@reduxjs/toolkit';
+import authReducer from './slices/authSlice';
+import itineraryReducer from './slices/itinerarySlice';
+
+export const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    itinerary: itineraryReducer,
+  },
+});
+
+// src/store/slices/authSlice.js
+import { createSlice } from '@reduxjs/toolkit';
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState: {
+    user: null,
+    loading: false,
+    error: null,
+  },
+  reducers: {
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+    setError: (state, action) => {
+      state.error = action.payload;
+    },
+  },
+});
+
+export const { setUser, setLoading, setError } = authSlice.actions;
+export default authSlice.reducer;
+
+```
+
+### 4. OpenAI Service Integration
+
+```jsx
+// src/services/openai.js
+import axios from 'axios';
+
+const openai = axios.create({
+  baseURL: '<https://api.openai.com/v1>',
+  headers: {
+    'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+    'Content-Type': 'application/json',
+  },
+});
+
+export const generateItinerary = async (preferences) => {
+  try {
+    const prompt = generatePrompt(preferences);
+    const response = await openai.post('/completions', {
+      model: 'gpt-4-turbo-preview',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a knowledgeable Malaysian travel planner.',
+        },
+        {
+          role: 'user',
+          content: prompt,
+        },
+      ],
+    });
+    return response.data.choices[0].message.content;
+  } catch (error) {
+    console.error('OpenAI API Error:', error);
+    throw error;
+  }
+};
+
+const generatePrompt = (preferences) => {
+  // Create a detailed prompt based on user preferences
+  return `Create a detailed Malaysian travel itinerary with the following preferences:
+    - Focus: ${preferences.focus.join(', ')}
+    - Budget: MYR ${preferences.budget}
+    - Number of people: ${preferences.people}
+    - Accommodation type: ${preferences.accommodation}
+    - Guide needed: ${preferences.needGuide}
+    - Dates: ${preferences.dates}
+
+    Please include:
+    - Daily schedule with times
+    - Estimated costs for each activity
+    - Transportation options and costs
+    - Halal/non-halal food recommendations
+    - Distance between locations
+    - Local cultural considerations`;
+};
+
+```
+
+### 5. Navigation Setup
+
+```jsx
+// src/navigation/AppNavigator.js
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useSelector } from 'react-redux';
+
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
+
+const TabNavigator = () => (
+  <Tab.Navigator>
+    <Tab.Screen name="Home" component={HomeScreen} />
+    <Tab.Screen name="Itinerary" component={ItineraryGenerator} />
+    <Tab.Screen name="Flights" component={FlightScreen} />
+    <Tab.Screen name="Accommodations" component={AccommodationScreen} />
+    <Tab.Screen name="News" component={NewsScreen} />
+  </Tab.Navigator>
+);
+
+export const AppNavigator = () => {
+  const user = useSelector((state) => state.auth.user);
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator>
+        {!user ? (
+          <Stack.Screen name="Auth" component={AuthScreen} />
+        ) : (
+          <Stack.Screen name="Main" component={TabNavigator} />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+```
+
+### 6. Theme Configuration
+
+```jsx
+// src/themes/index.js
+import { DefaultTheme } from 'react-native-paper';
+
+export const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#2196F3',
+    accent: '#f1c40f',
+    background: '#f5f5f5',
+    surface: '#ffffff',
+    text: '#000000',
+    error: '#B00020',
+  },
+  spacing: {
+    xs: 4,
+    sm: 8,
+    md: 16,
+    lg: 24,
+    xl: 32,
+  },
+  roundness: 8,
+};
+
+```
+
+## Backend Implementation
+
+### 1. Server Setup
+
+```jsx
+// backend/src/index.js
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import routes from './routes';
+
+dotenv.config();
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use('/api', routes);
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((err) => console.error('MongoDB connection error:', err));
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+```
+
+### 2. User Model
+
+```jsx
+// backend/src/models/User.js
+import mongoose from 'mongoose';
+
+const userSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  name: String,
+  preferences: {
+    travelStyle: [String],
+    dietaryRestrictions: [String],
+    budget: {
+      type: Number,
+      default: 0,
+    },
+  },
+  savedItineraries: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Itinerary',
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+export const User = mongoose.model('User', userSchema);
+
+```
+
+### 3. Itinerary Model
+
+```jsx
+// backend/src/models/Itinerary.js
+import mongoose from 'mongoose';
+
+const itinerarySchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  title: String,
+  dates: {
+    start: Date,
+    end: Date,
+  },
+  preferences: {
+    focus: [String],
+    budget: Number,
+    people: Number,
+    accommodation: String,
+    needGuide: Boolean,
+  },
+  schedule: [{
+    day: Number,
+    activities: [{
+      time: String,
+      description: String,
+      location: String,
+      cost: Number,
+      transport: String,
+      transportCost: Number,
+    }],
+  }],
+  totalCost: Number,
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+export const Itinerary = mongoose.model('Itinerary', itinerarySchema);
+
+```
+
+## Additional Components
+
+1. Flight Price Tracker
+2. Accommodation Finder
+3. Travel News Feed
+4. Settings Screen
+5. Profile Management
+
+Would you like me to provide the implementation details for any of these additional components or elaborate on any part of the existing implementation?
+
+This guide provides a solid foundation for building the Travel Buddy: MY app. You can share this with Replit AI to get started with the development. The implementation follows best practices and includes all the core functionalities you mentioned. Let me know if you need any clarification or additional details for specific components.
+
+[Part 2](https://www.notion.so/Part-2-12c92d4d892c80e4be7ec1d988888354?pvs=21)
+
+[Part 3](https://www.notion.so/Part-3-12c92d4d892c80919e2bf41f89bd8c45?pvs=21)
+
+[Removing Donation Part 4](https://www.notion.so/Removing-Donation-Part-4-12c92d4d892c80d69af1d33adbc190a9?pvs=21)
+
+I have an app idea for Android user
+
+Name: Travel Buddy: MY
+Description of the app:
+
+- User can register and login via Google account/gmail
+- An app that will help build iternary with Open AI for Malaysia user, give them a heads up, halal places to go, non-halal places to go etc.
+    - This itenary will a single prompt will help to suggest hidden gem of the places that they wanna go
+    - They can have option to choose either scenery focus, food hunting focus, camping focus, hiking focus iternary or even a mixed of everything
+    - The user will need to include their budget in MYR
+    - The user need to key in how many people
+    - The user need to key in accomodation preference, Home type or Hotel type
+    - The user to key in if they need travel guide or not.
+    - The user will have the option to select the date or season that they wanna go
+    - The app will help to identify what would be the cheapest flight ticket date on that season
+    - A complete iternary of how much are expected that they will spend on a daily basis.
+    - An Itenary with time for each day and where they will move into next location
+    - An itenary that will also estimate the distance that they need to travel
+    - Inform the user on the transportation type that they will be using and how much it will cost
+- Another tab/interface to check on flight ticket prices and or the cheapest
+    - Not quite sure if we need to integrate any Flight detail websites for this in the app
+- Another tab to check on cheap accomodation to go, that connect with Agoda, [Booking.com](http://booking.com/), AirBnB and other available app with a single click.
+    - This by no mean will integrate their API, it just routed them to the Agoda or AirBnB app/websites that they choose to check.
+- Another tab of newsletter by Utilizing OpenAI
+    - Open AI will check check which country are the best place to go right now, it will be based on MYR currency strength against that country
+    - and option to "Create Itenary for (The country name suggested)"
+    - All those OpenAI are being suggested on a daily basis to all of our user, which only utilize 1 prompt technicaly to update our user on suggestions
+    The design:
+- Aiming for modern minimalistic look that echoes with Malaysian user
+- Malaysian are concise of diverse culture and races, where we are a 1 Malaysia at heart, I want the App design and UI reflect to that.
+- With the twist of modern and minimalistic look
+
+How will it be monetize?
+
+- With donate feature for the user, no premium subs
+- Ads to provide non-instrusive ads in the app
+- Ads to provide an inskippable app everytime they request to create an Iternary.
+- Long run and not in focus right now
+    - The aim is to connect with our partnered travel company in Malaysia
+    - The travel company will have ratings and reviews with them
+- 
+
+TnC
+
+- To create the Terms and Agreement needed to run in Google Playstore
+- Any legality issues or concern
+What else would you suggest to help improve this app?

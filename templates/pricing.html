@@ -1,0 +1,450 @@
+{% extends "base.html" %} {% block title %}Pricing Plans{% endblock %} {% block
+content %}
+
+<div class="container py-5">
+    <div class="text-center mb-5">
+        <h1 class="display-4">Choose Your Plan</h1>
+        <p class="lead">Select the perfect plan for your travel needs</p>
+
+        <!-- Billing Toggle -->
+        <div class="billing-toggle-container mb-4">
+            <div
+                class="form-check form-switch d-inline-flex align-items-center gap-4 ms-3"
+            >
+                <span
+                    class="fw-bold {% if billing_cycle == 'monthly' %}text-primary{% endif %} me-3">Monthly</span>
+                >
+                <input 
+                    class="form-check-input" 
+                    type="checkbox" 
+                    id="billingToggle"
+                    {% if billing_cycle == 'yearly' %}checked{% endif %}
+                />
+                <span
+                    class="fw-bold {% if billing_cycle == 'yearly' %}text-primary{% endif %} ps-1">Yearly <span class="badge bg-success py-2 px-2" style="font-size: 0.95rem;">Save 17%</span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-4 mb-3 text-center">
+        <!-- Free Tier -->
+        <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm h-100">
+                <div class="card-header py-3">
+                    <h4 class="my-0 fw-normal">Solo Backpacker</h4>
+                    <span class="badge bg-secondary">Free</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h1 class="card-title pricing-card-title">
+                        $0<small class="text-muted fw-light">/mo</small>
+                    </h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>✔️ 1 itinerary per month</li>
+                        <li>✔️ 1-day trips</li>
+                        <li>✔️ 1 traveler only</li>
+                        <li>✔️ Basic AI Recommendation</li>
+                        <li>✔️ Detail planning including:</li>
+                        <li class="text-muted">✔️ Time & dates</li>
+                        <li class="text-muted">✔️ Maps feature</li>
+                        <li class="text-muted">✔️ Budget breakdown</li>
+                        <li class="text-muted">❌ Travel Buddy access</li>
+                        <li class="text-muted">❌ PDF export</li>
+                    </ul>
+                    <div class="mt-auto">
+                        {% if current_user.is_authenticated and
+                        current_user.subscription_tier == 'solo_backpacker' %}
+                        <button
+                            class="w-100 btn btn-lg btn-outline-primary"
+                            disabled
+                        >
+                            Current Plan
+                        </button>
+                        {% else %}
+                        <a
+                            href="{{ url_for('google_auth.login') }}"
+                            class="w-100 btn btn-lg btn-outline-primary"
+                        >
+                            Get Started
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tandem Trekkers -->
+        <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm h-100">
+                <div class="card-header py-3">
+                    <h4 class="my-0 fw-normal">Tandem Trekkers</h4>
+                    <span class="badge bg-warning ms-2 text-white">Best for Small Family</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h1 class="card-title pricing-card-title">
+                        <span class="monthly-price"
+                            >$4.99<small class="text-muted fw-light"
+                                >/mo</small
+                            ></span
+                        >
+                        <span class="yearly-price" style="display: none">
+                            $49.90<small class="text-muted fw-light"
+                                >/year</small
+                            >
+                            <span class="badge bg-success py-1 px-2" style="font-size: 0.95rem;">Save 17%</span>
+                        </span>
+                    </h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>✔️ 3 itineraries per month</li>
+                        <li>✔️ Up to 3-day trips</li>
+                        <li>✔️ 2 travelers + 2 infants</li>
+                        <li>✔️ Advanced AI Recommendation</li>
+                        <li>✔️ Detail planning including:</li>
+                        <li>✔️ Time & dates</li>
+                        <li>✔️ Maps feature</li>
+                        <li>✔️ Budget breakdown</li>
+                        <li class="text-muted">❌ Travel Buddy access</li>
+                        <li class="text-muted">❌ PDF export</li>
+                    </ul>
+                    <div class="mt-auto">
+                        {% if current_user.is_authenticated %} {% if
+                        current_user.subscription_tier == 'tandem_trekker' %}
+                        <button class="w-100 btn btn-lg btn-primary" disabled>
+                            Current Plan
+                        </button>
+                        {% else %}
+                        <button
+                            class="w-100 btn btn-lg btn-primary upgrade-btn"
+                            data-tier="tandem_trekker"
+                            data-monthly-price="4.99"
+                            data-yearly-price="49.90"
+                        >
+                            Upgrade Now
+                        </button>
+                        {% endif %} {% else %}
+                        <a
+                            href="{{ url_for('google_auth.login') }}"
+                            class="w-100 btn btn-lg btn-primary"
+                        >
+                            Get Started
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Continue with Part 2 -->
+        <!-- Gold Wanderer -->
+        <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm border-primary h-100">
+                <div class="card-header py-3 text-bg-primary border-primary">
+                    <h4 class="my-0 fw-normal">Gold Wanderer</h4>
+                    <span class="badge bg-primary ms-2 text-white">Most Popular</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h1 class="card-title pricing-card-title">
+                        <span class="monthly-price"
+                            >$14.99<small class="text-muted fw-light"
+                                >/mo</small
+                            ></span
+                        >
+                        <span class="yearly-price" style="display: none">
+                            $149.90<small class="text-muted fw-light"
+                                >/year</small
+                            >
+                            <span class="badge bg-success py-1 px-2" style="font-size: 0.95rem;">Save 17%</span>
+                    </h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>✔️ 6 itineraries per month</li>
+                        <li>✔️ Up to 7-day trips</li>
+                        <li>✔️ Up to 10 travelers</li>
+                        <li>✔️ Advanced AI Recommendation</li>
+                        <li>✔️ Priority Support</li>
+                        <li>✔️ Detail planning including:</li>
+                        <li>✔️ Time & dates</li>
+                        <li>✔️ Maps feature</li>
+                        <li>✔️ Budget breakdown</li>
+                        <li><i class="fas fa-clock text-warning me-2"></i>Travel Buddy Access
+                            <span class="badge bg-warning text-dark"
+                                >Coming Soon</span
+                            >
+                        </li>
+                        <li><i class="fas fa-clock text-warning me-2"></i>PDF Export
+                            <span class="badge bg-warning text-dark"
+                                >Coming Soon</span
+                            >
+                        </li>
+                    </ul>
+                    <div class="mt-auto">
+                        {% if current_user.is_authenticated %} {% if
+                        current_user.subscription_tier == 'gold_wanderer' %}
+                        <button class="w-100 btn btn-lg btn-primary" disabled>
+                            Current Plan
+                        </button>
+                        {% else %}
+                        <button
+                            class="w-100 btn btn-lg btn-primary upgrade-btn"
+                            data-tier="gold_wanderer"
+                            data-monthly-price="14.99"
+                            data-yearly-price="149.90"
+                        >
+                            Upgrade Now
+                        </button>
+                        {% endif %} {% else %}
+                        <a
+                            href="{{ url_for('google_auth.login') }}"
+                            class="w-100 btn btn-lg btn-primary"
+                        >
+                            Get Started
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Business -->
+        <div class="col">
+            <div class="card mb-4 rounded-3 shadow-sm border-dark h-100">
+                <div class="card-header py-3 text-bg-dark border-dark">
+                    <h4 class="my-0 fw-normal">Business</h4>
+                    <span class="badge bg-info">Coming Soon</span>
+                </div>
+                <div class="card-body d-flex flex-column">
+                    <h1 class="card-title pricing-card-title">Custom</h1>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>All Gold Wanderer features plus:</li>
+                        <li>✔️ Customizable itinerary limits</li>
+                        <li>✔️Up to 20 travelers</li>
+                        <li>✔️ Up to 14-day trips</li>
+                        <li>✔️ Travel Buddy Access</li>
+                        <li>✔️ Bulk itinerary creation</li>
+                        <li>✔️ Advanced AI</li>
+                        <li>✔️ White label options</li>
+                        <li>✔️ Dedicated account manager</li>
+                        <li>✔️ API access</li>
+                    </ul>
+                    <div class="mt-auto">
+                        <button class="w-100 btn btn-lg btn-dark waitlist-btn">
+                            Join Waitlist
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features included in all plans -->
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title text-center mb-4">
+                        All Plans Include
+                    </h5>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <i
+                                        class="fas fa-check text-success me-2"
+                                    ></i
+                                    >Personalized itineraries
+                                </li>
+                                <li>
+                                    <i
+                                        class="fas fa-check text-success me-2"
+                                    ></i
+                                    >Budget optimization
+                                </li>
+                                <li>
+                                    <i
+                                        class="fas fa-check text-success me-2"
+                                    ></i
+                                    >Cultural insights
+                                </li>
+                                <li>
+                                    <i
+                                        class="fas fa-check text-success me-2"
+                                    ></i
+                                    >Halal Food recommendation
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li>
+                                    <i
+                                        class="fas fa-check text-success me-2"
+                                    ></i
+                                    >Prayer space location
+                                </li>
+                                <li>
+                                    <i
+                                        class="fas fa-check text-success me-2"
+                                    ></i
+                                    >Safety information
+                                </li>
+                                <li>
+                                    <i
+                                        class="fas fa-check text-success me-2"
+                                    ></i
+                                    >Detailed planning with maps
+                                </li>
+                                <li>
+                                    <i
+                                        class="fas fa-check text-success me-2"
+                                    ></i
+                                    >24/7 Support
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Waitlist Modal -->
+<div class="modal fade" id="waitlistModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Join Business Plan Waitlist</h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <form id="waitlistForm">
+                    <div class="mb-3">
+                        <label for="companyName" class="form-label"
+                            >Company Name</label
+                        >
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="companyName"
+                            required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="contactEmail" class="form-label"
+                            >Contact Email</label
+                        >
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="contactEmail"
+                            required
+                        />
+                    </div>
+                    <div class="mb-3">
+                        <label for="estimatedUsers" class="form-label"
+                            >Estimated Number of Users</label
+                        >
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="estimatedUsers"
+                            required
+                        />
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Close
+                </button>
+                <button type="button" class="btn btn-dark" id="submitWaitlist">
+                    Submit
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const billingToggle = document.getElementById("billingToggle");
+        const monthlyPrices = document.querySelectorAll(".monthly-price");
+        const yearlyPrices = document.querySelectorAll(".yearly-price");
+
+        // Toggle between monthly and yearly prices
+        billingToggle.addEventListener("change", function () {
+            monthlyPrices.forEach(
+                (el) => (el.style.display = this.checked ? "none" : "block"),
+            );
+            yearlyPrices.forEach(
+                (el) => (el.style.display = this.checked ? "block" : "none"),
+            );
+
+            // Update upgrade buttons data
+            document.querySelectorAll(".upgrade-btn").forEach((btn) => {
+                btn.setAttribute(
+                    "data-billing-cycle",
+                    this.checked ? "yearly" : "monthly",
+                );
+            });
+        });
+
+        // Handle waitlist button
+        const waitlistBtn = document.querySelector(".waitlist-btn");
+        if (waitlistBtn) {
+            waitlistBtn.addEventListener("click", function () {
+                const modal = new bootstrap.Modal(
+                    document.getElementById("waitlistModal"),
+                );
+                modal.show();
+            });
+        }
+
+        // Handle waitlist form submission
+        const submitWaitlistBtn = document.getElementById("submitWaitlist");
+        if (submitWaitlistBtn) {
+            submitWaitlistBtn.addEventListener("click", function () {
+                const form = document.getElementById("waitlistForm");
+                if (form.checkValidity()) {
+                    // TODO: Handle waitlist submission
+                    bootstrap.Modal.getInstance(
+                        document.getElementById("waitlistModal"),
+                    ).hide();
+                    showToast(
+                        "Success",
+                        "Thank you for joining our waitlist! We'll contact you soon.",
+                        "success",
+                    );
+                } else {
+                    form.reportValidity();
+                }
+            });
+        }
+
+        // Handle upgrade buttons
+        document.querySelectorAll(".upgrade-btn").forEach((btn) => {
+            btn.addEventListener("click", function () {
+                // TODO: Implement Stripe integration
+                const tier = this.getAttribute("data-tier");
+                const isBillingYearly = billingToggle.checked;
+                const price = isBillingYearly
+                    ? this.getAttribute("data-yearly-price")
+                    : this.getAttribute("data-monthly-price");
+
+                console.log(
+                    `Upgrading to ${tier} - ${isBillingYearly ? "yearly" : "monthly"} plan at $${price}`,
+                );
+            });
+        });
+    });
+</script>
+{% endblock %}

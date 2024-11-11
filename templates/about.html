@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}About Us{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="mb-4 text-center">About Travel Buddy Asia</h2>
+            
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-3">Our Story</h3>
+                    <p class="lead">
+                        Travel Buddy Asia was born from a mission to revolutionize how Malaysian travelers plan and experience their travels, bringing transparency to travel costs and eliminating unnecessary markups.
+                    </p>
+                    <p>
+                        As Malaysian travelers ourselves, we understand the challenges of planning affordable international trips. Through extensive research and feedback from the Malaysian travel community, we discovered a need for clearer, more transparent travel pricing. That's why we created a platform that puts honest pricing and cultural authenticity at the forefront of travel planning for Malaysians.
+                    </p>
+                    <p>
+                        Our AI-powered platform breaks down the true costs of travel, from halal food options to local transportation, helping you understand exactly what you need to budget for your dream destination. No hidden fees, no per-person markups - just straightforward planning tools that respect your wallet and values.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-3">Leadership</h3>
+                    <div class="row align-items-center">
+                        <div class="col-md-4 mb-3 mb-md-0">
+                            <img src="{{ url_for('static', filename='img/shahrul-nazmi.jpg') }}" alt="Shahrul Nazmi - CEO & Founder" class="img-fluid rounded mb-3">
+                        </div>
+                        <div class="col-md-8">
+                            <h4 class="h5">Nami (Shahrul Nazmi)</h4>
+                            <p class="text-muted mb-3">Founder</p>
+                            <p>
+                                A passionate advocate for accessible travel and AI technology enthusiast, Nami founded Travel Buddy with a personal mission: to make international travel achievable for every Malaysian and the world. Drawing from his experience at a leading social media platform where he transitioned from marketing (generating over USD 500,000 in first-year revenue) to AI data operations, Nami brings a unique blend of business acumen and technological insight to Travel Buddy.
+                            </p>
+                            <p>
+                                Having grown up with limited travel opportunities and only recently making his first international trip to Singapore, Nami intimately understands the challenges many Malaysians face when it comes to travel planning and budgeting. This personal experience, combined with his 4-year leadership background in customer service management, drives Travel Buddy's mission to democratize travel through transparent pricing and AI-powered planning tools. His vision is to ensure that no traveler's dream of exploring the world is limited by lack of information or planning resources.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-3">Our Mission</h3>
+                    <p>
+                        We aim to empower Malaysian travelers with:
+                    </p>
+                    <ul class="list-group list-group-flush mb-3">
+                        <li class="list-group-item">
+                            <i class="fas fa-calculator text-primary me-2"></i>
+                            <strong>Transparent Pricing:</strong> Clear breakdown of travel costs in MYR
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-mosque text-primary me-2"></i>
+                            <strong>Cultural Sensitivity:</strong> Halal-friendly travel recommendations
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-robot text-primary me-2"></i>
+                            <strong>AI-Powered Planning:</strong> Smart itineraries tailored to Malaysian preferences
+                        </li>
+                        <li class="list-group-item">
+                            <i class="fas fa-users text-primary me-2"></i>
+                            <strong>Community Focus:</strong> Travel insights from fellow Malaysians
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h3 class="card-title mb-3">Future Development</h3>
+                    <p class="lead mb-4">Exciting developments on the horizon:</p>
+                    
+                    <h4 class="h5 mb-3">Asia Pacific Expansion</h4>
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-map-marked-alt text-primary fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="h6">Regional Network</h5>
+                                    <p class="mb-0">Partnerships with local travel experts across APAC</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-handshake text-primary fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="h6">Local Partnerships</h5>
+                                    <p class="mb-0">Exclusive deals with regional hotels and attractions</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="h5 mb-3">Enhanced Features</h4>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-plane text-primary fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="h6">Flight Tracking</h5>
+                                    <p class="mb-0">Real-time flight prices and alerts</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-hotel text-primary fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="h6">Accommodation Booking</h5>
+                                    <p class="mb-0">Direct hotel and homestay bookings</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-newspaper text-primary fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="h6">Travel News</h5>
+                                    <p class="mb-0">Latest updates and travel advisories</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start">
+                                <i class="fas fa-comments text-primary fa-2x me-3"></i>
+                                <div>
+                                    <h5 class="h6">Community Platform</h5>
+                                    <p class="mb-0">Connect with fellow travelers</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

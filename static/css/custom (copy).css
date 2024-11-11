@@ -1,0 +1,411 @@
+/* Root Variables - Sunset Color Palette */
+:root {
+    --sunset-primary: #FF7B54;    /* Warm orange */
+    --sunset-secondary: #FFB26B;  /* Soft peach */
+    --sunset-accent: #FFD56F;     /* Golden yellow */
+    --sunset-warm: #FFE6C7;       /* Light cream */
+    --sunset-dark: #6B4F4F;       /* Deep brown */
+    --sunset-light: #FFF1E6;      /* Pale peach */
+    --sunset-highlight: #FF6B6B;  /* Coral */
+    --sunset-error: #FF4949;      /* Error red */
+    --sunset-success: #95D1CC;    /* Soft teal */
+    --sunset-warning: #FFD93D;    /* Warning yellow */
+    --text-dark: #4A4A4A;         /* Dark gray */
+    --text-light: #FFFFFF;        /* White */
+    --shadow-color: rgba(107, 79, 79, 0.1);
+}
+
+/* Global Styles */
+body {
+    background: linear-gradient(135deg, var(--sunset-warm), var(--sunset-secondary));
+    color: var(--text-dark);
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--sunset-dark) !important;
+    font-weight: 600;
+}
+
+p, span, div, li {
+    color: var(--text-dark) !important;
+}
+
+/* Invalid Messages and Error States */
+.invalid-feedback, 
+.error-message,
+.text-danger {
+    color: var(--sunset-error) !important;
+    font-weight: 500;
+}
+
+/* Navbar Styling */
+.navbar {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--sunset-accent);
+    padding: 1rem;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--text-light) !important;
+    transition: color 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--sunset-warm) !important;
+    transform: translateY(-2px);
+}
+
+.navbar-dark .navbar-brand {
+    color: var(--text-light) !important;
+    font-weight: bold;
+}
+
+/* Card Styling */
+.card {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.9)) !important;
+    border: none !important;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px var(--shadow-color);
+}
+
+.card-header {
+    background: linear-gradient(90deg, var(--sunset-secondary), var(--sunset-accent)) !important;
+    border-bottom: 1px solid var(--sunset-accent) !important;
+    color: var(--text-dark) !important;
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.card-body {
+    color: var(--text-dark) !important;
+}
+
+.card-title {
+    color: var(--sunset-dark) !important;
+    font-weight: 600;
+}
+
+/* Homepage Statistics Section */
+.stat-card {
+    background: linear-gradient(135deg, var(--sunset-primary), var(--sunset-secondary));
+    border-radius: 15px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px var(--shadow-color);
+}
+.stat-number {
+    color: var(--text-light) !important;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+.stat-label {
+    color: var(--sunset-light) !important;
+    font-weight: 500;
+}
+
+.stat-label {
+    color: var(--sunset-light) !important;
+    font-weight: 500;
+}
+
+/* Pricing Table Styles */
+.pricing-card {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.9));
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.pricing-card:hover {
+    transform: translateY(-10px);
+}
+
+.pricing-header {
+    background: linear-gradient(90deg, var(--sunset-secondary), var(--sunset-accent));
+    color: var(--text-dark) !important;
+    border-radius: 15px 15px 0 0;
+}
+
+.pricing-features li {
+    color: var(--text-dark) !important;
+}
+
+/* Feature not available X icon */
+.feature-not-available::before {
+    content: "✕";
+    color: var(--sunset-error);
+    font-weight: bold;
+}
+
+/* Toggle Switch Styling */
+.form-check-input:checked {
+    background-color: var(--sunset-success) !important;
+    border-color: var(--sunset-success) !important;
+}
+
+.form-check-input:not(:checked) {
+    background-color: var(--sunset-error) !important;
+    border-color: var(--sunset-error) !important;
+}
+
+/* Checkbox Styling */
+.form-check-input[type="checkbox"]:checked {
+    background-color: var(--sunset-success) !important;
+    border-color: var(--sunset-success) !important;
+}
+
+/* Toast Notifications */
+.toast {
+    background: var(--sunset-light) !important;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.toast-header {
+    background: var(--sunset-secondary) !important;
+    color: var(--text-dark) !important;
+    border-radius: 10px 10px 0 0;
+}
+
+.toast.success .toast-header {
+    background: var(--sunset-success) !important;
+}
+
+.toast.warning .toast-header {
+    background: var(--sunset-warning) !important;
+}
+
+.toast.error .toast-header {
+    background: var(--sunset-error) !important;
+}
+
+/* Coming Soon Section */
+.coming-soon {
+    background: linear-gradient(135deg, var(--sunset-secondary), var(--sunset-accent));
+    color: var(--text-dark) !important;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+/* Footer Styling */
+footer, .footer {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    color: var(--text-light) !important;
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+footer a, .footer a {
+    color: var(--text-light) !important;
+    transition: color 0.3s ease;
+}
+
+footer a:hover, .footer a:hover {
+    color: var(--sunset-warm) !important;
+    text-decoration: none;
+}
+
+/* Mission Card Specific Styling */
+.mission-card {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.9)) !important;
+    color: var(--text-dark) !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .stat-number {
+        font-size: 2rem;
+    }
+
+    .card {
+        margin: 0.5rem 0;
+    }
+}
+
+/* Button Styling */
+.btn-primary {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    border: none !important;
+    color: var(--text-light) !important;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--shadow-color);
+    opacity: 0.9;
+}
+
+/* FAQ Accordion Styling */
+.accordion-button {
+    background: linear-gradient(90deg, var(--sunset-secondary), var(--sunset-accent)) !important;
+    color: var(--text-dark) !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: all 0.3s ease;
+}
+.accordion-button:not(.collapsed) {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    color: var(--text-light) !important;
+}
+.accordion-button::after {
+    color: var(--text-dark);
+    background-color: var(--sunset-light);
+    border-radius: 50%;
+}
+.accordion-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--shadow-color) !important;
+}
+
+/* FAQ Accordion Body Styling */
+.accordion-body {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.95)) !important;
+    color: var(--text-dark) !important;
+    padding: 1.5rem;
+    border-radius: 0 0 10px 10px;
+}
+
+.accordion-item {
+    background: transparent !important;
+    border: none !important;
+    margin-bottom: 0.5rem;
+}
+
+/* About Us List Group Styling */
+.list-group-item {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.95)) !important;
+    color: var(--text-dark) !important;
+    border: 1px solid var(--sunset-secondary) !important;
+    margin-bottom: 0.25rem;
+    transition: all 0.3s ease;
+}
+.list-group-item:hover {
+    transform: translateX(5px);
+    background: linear-gradient(135deg, var(--sunset-secondary), var(--sunset-accent)) !important;
+    color: var(--text-dark) !important;
+}
+.list-group {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* Country Card Styling */
+.country-card {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.9)) !important;
+    border: none !important;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+    padding: 1.5rem;
+}
+.country-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px var(--shadow-color);
+}
+.country-icon {
+    color: var(--sunset-dark);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+.stat-list {
+    color: var(--text-dark);
+}
+.stat-item {
+    margin-bottom: 0.5rem;
+}
+.stat-value {
+    color: var(--sunset-primary);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+/* Tooltip customization for source information */
+.tooltip {
+    opacity: 0.98 !important;
+}
+.tooltip-inner {
+    background: linear-gradient(135deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    color: var(--text-light) !important;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: var(--sunset-primary) !important;
+}
+
+/* Profile Usage Progress Bar Styling */
+.progress {
+    background-color: var(--sunset-light);
+    border-radius: 10px;
+    height: 15px !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
+    border: 1px solid var(--sunset-secondary);
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    border-radius: 10px;
+    position: relative;
+    transition: width 0.6s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar.bg-warning {
+    background: linear-gradient(90deg, var(--sunset-warning), var(--sunset-highlight)) !important;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
+}
+
+/* Usage Text Styling */
+.usage-status small.text-muted {
+    color: var(--text-dark) !important;
+    font-weight: 500;
+    opacity: 1 !important;
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Leadership Section Styling */
+.card-body .h5, 
+.card-body .text-muted,
+.card-body p {
+    color: var(--text-dark) !important;
+    opacity: 1;
+}
+.text-muted {
+    color: var(--sunset-dark) !important;
+    font-weight: 500;
+    opacity: 0.8;
+}
+/* Specific styling for CEO title */
+.card-body h4.h5 {
+    color: var(--sunset-dark) !important;
+    font-weight: 600;
+}
+

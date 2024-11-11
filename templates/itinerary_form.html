@@ -1,0 +1,498 @@
+{% extends "base.html" %}
+{% block title %}Create Itinerary{% endblock %}
+{% block content %}
+
+{# AI Model Information Section #}
+<div class="row mb-4">
+    <div class="col-12">
+        {# Plan-specific AI model notice #}
+        {% if current_user.subscription_tier == 'solo_backpacker' %}
+        <div class="alert alert-info">
+            <h5 class="alert-heading"><i class="fas fa-robot"></i> Using Basic AI Model (GPT-3.5)</h5>
+            <p>You're currently using our basic AI model. For more detailed and personalized itineraries, consider upgrading to our Gold Wanderer plan to access GPT-4.</p>
+            <a href="{{ url_for('main_views.pricing') }}" class="btn btn-primary btn-sm">Upgrade Now</a>
+        </div>
+        {% elif current_user.subscription_tier == 'tandem_trekker' %}
+        <div class="alert alert-info">
+            <h5 class="alert-heading"><i class="fas fa-robot"></i> Using Standard AI Model (GPT-3.5)</h5>
+            <p>Upgrade to Gold Wanderer for our most advanced AI planning with GPT-4.</p>
+            <a href="{{ url_for('main_views.pricing') }}" class="btn btn-primary btn-sm">Upgrade to Premium</a>
+        </div>
+        {% else %}
+        <div class="alert alert-success">
+            <h5 class="alert-heading"><i class="fas fa-check-circle"></i> Using Premium AI Model (GPT-4)</h5>
+            <p>You're using our advanced AI model for superior itinerary generation.</p>
+        </div>
+        {% endif %}
+
+        {# Monthly Usage Information #}
+        <div class="alert alert-info">
+            <h5 class="alert-heading"><i class="fas fa-calendar-check"></i> Monthly Usage</h5>
+            <p>You have {{ remaining_itineraries }} itinerary generations remaining this month.</p>
+            <div class="progress">
+                <div class="progress-bar" role="progressbar" 
+                     style="width: {{ (current_user.itineraries_generated_this_month / current_user.max_itineraries_per_month * 100)|round }}%"
+                     aria-valuenow="{{ current_user.itineraries_generated_this_month }}"
+                     aria-valuemin="0"
+                     aria-valuemax="{{ current_user.max_itineraries_per_month }}">
+                </div>
+            </div>
+        </div>
+
+        {# API Availability Check #}
+        {% if not openai_api_available %}
+        <div class="alert alert-warning">
+            The itinerary generation feature is temporarily unavailable. Our system requires OpenAI API access to generate personalized travel plans.
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{# Main Form Container Start #}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Create Your Travel Itinerary</h2>
+            </div>
+            <div class="card-body">
+
+                {# Flash Messages #}
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                {% endwith %}
+
+                <form method="POST" id="itineraryForm" 
+                      data-max-duration="{{ max_duration }}" 
+                      data-max-travelers="{{ max_travelers }}" 
+                      data-max-infants="{{ max_infants }}">
+                    {{ form.csrf_token }}
+
+                    {# Basic Information Section #}
+                    <div class="section-basic mb-4">
+                        <h4 class="section-title">Basic Information</h4>
+
+                        {# Citizenship #}
+                        <div class="form-group mb-3">
+                            {{ form.citizenship.label }}
+                            {{ form.citizenship(class="form-control") }}
+                            {% if form.citizenship.errors %}
+                            {% for error in form.citizenship.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+
+                        {# Destination #}
+                        <div class="mb-3">
+                            {{ form.destinations.label }}
+                            {{ form.destinations(class="form-select") }}
+                            <div class="form-text">
+                                Choose your destination country or select 'Surprise Me!' for a random destination!
+                            </div>
+                        </div>
+
+                        {# Specific Locations #}
+                        <div class="mb-3">
+                            {{ form.specific_locations.label }}
+                            {{ form.specific_locations(class="form-control") }}
+                            <div class="form-text">
+                                Enter specific places or landmarks you'd like to visit, separated by commas
+                            </div>
+                            <div id="landmarks-error" class="invalid-feedback"></div>
+                            <div id="landmarks-suggestions" class="form-text mt-2 text-info" style="display: none;"></div>
+                        </div>
+                    </div>
+
+                    {# Travel Focus Section #}
+                    <div class="section-travel-focus mb-4">
+                        <h4 class="section-title">Travel Focus</h4>
+                        <div class="d-flex justify-content-between align-items-center travel-focus-header">
+                            {{ form.travel_focus.label }}
+                            <button type="button" id="selectAllTravelFocus" class="btn btn-outline-primary btn-sm">Select All</button>
+                        </div>
+                        <div class="travel-focus-grid">
+                            {% for subfield in form.travel_focus %}
+                            {{ subfield(class="form-check-input") }}
+                            {{ subfield.label(class="form-check-label") }}
+                            {% endfor %}
+                        </div>
+                        <div class="form-text">
+                            Select one or more travel focuses for your trip
+                        </div>
+                    </div>
+
+                    {# Budget Section #}
+                    <div class="section-budget mb-4">
+                        <h4 class="section-title">Budget Information</h4>
+
+                        {# Currency and Amount #}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                {{ form.currency.label }}
+                                {{ form.currency(class="form-select", onchange="updateBudgetDisplay()") }}
+                                <div class="form-text">
+                                    Select your preferred currency for budget calculation
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.budget.label }}
+                                {{ form.budget(class="form-control", onchange="updateBudgetDisplay()") }}
+                                <div class="form-text">
+                                    Enter amount in selected currency
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Budget Breakdown Display #}
+                        <div id="budgetBreakdown" class="alert alert-info mt-3" style="display: none;">
+                            <h5 class="alert-heading">Budget Breakdown:</h5>
+                            <div id="budgetDetails"></div>
+                        </div>
+
+                        {# Budget Inclusions #}
+                        <div class="mt-3">
+                            <h5>Inclusions</h5>
+                            <div class="d-flex flex-column gap-2">
+                                <div class="form-check form-switch">
+                                    {{ form.include_flights(class="form-check-input", onchange="updateBudgetDisplay()") }}
+                                    {{ form.include_flights.label }}
+                                </div>
+                                <div class="form-check form-switch">
+                                    {{ form.include_accommodation(class="form-check-input", onchange="updateBudgetDisplay()") }}
+                                    {{ form.include_accommodation.label }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    {# Travelers Section #}
+                    <div class="section-travelers mb-4">
+                        <h4 class="section-title">Number of Travelers</h4>
+                        <div class="row g-3">
+                            <div class="col-md-6 col-lg-3">
+                                {{ form.num_adults.label }}
+                                {{ form.num_adults(class="form-control", onchange="validateTravelersAndUpdateBudget()") }}
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                {{ form.num_youth.label }}
+                                {{ form.num_youth(class="form-control", onchange="validateTravelersAndUpdateBudget()") }}
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                {{ form.num_children.label }}
+                                {{ form.num_children(class="form-control", onchange="validateTravelersAndUpdateBudget()") }}
+                            </div>
+                            <div class="col-md-6 col-lg-3">
+                                {{ form.num_infants.label }}
+                                {{ form.num_infants(class="form-control", onchange="validateTravelersAndUpdateBudget()") }}
+                            </div>
+                        </div>
+                        <div class="form-text mt-2">
+                            <ul class="mb-0">
+                                <li>Maximum {{ max_travelers }} travelers per itinerary (current plan limit)</li>
+                                <li>At least one adult required when traveling with children or infants</li>
+                                <li>Maximum {{ max_infants }} infants allowed (current plan limit)</li>
+                                <li>Consider upgrading your plan for larger groups</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    {# Accommodation Section #}
+                    <div class="section-accommodation mb-4">
+                        <h4 class="section-title">Accommodation Details</h4>
+                        <div class="mb-3">
+                            {{ form.accommodation_location.label }}
+                            {{ form.accommodation_location(class="form-control") }}
+                            <div class="form-text">
+                                Enter the area, district, or neighborhood where you plan to stay
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form.accommodation_name.label }}
+                            {{ form.accommodation_name(class="form-control") }}
+                            <a href="{{ url_for('main_views.accommodations') }}" class="text-info text-decoration-none">
+                                Don't have an accommodation yet? Click here
+                            </a>
+                        </div>
+                    </div>
+
+                    {# Preferences Section #}
+                    <div class="section-preferences mb-4">
+                        <h4 class="section-title">Travel Preferences</h4>
+                        <div class="d-flex flex-column gap-2">
+                            {# Travel Buddy Option #}
+                            <div class="form-check form-switch">
+                                {{ form.need_guide(class="form-check-input", disabled=true) }}
+                                {{ form.need_guide.label }}
+                                <span class="badge bg-warning text-dark">Coming Soon!</span>
+                                <div class="form-text">
+                                    {{ form.need_guide.description }}
+                                </div>
+                            </div>
+
+                            {# Halal Food Option #}
+                            <div class="form-check form-switch">
+                                {{ form.halal_food(class="form-check-input") }}
+                                {{ form.halal_food.label }}
+                                <div class="form-text" id="halalFoodInfo" style="display: none;">
+                                    <ul class="mb-0">
+                                        <li>Prayer times will be included in your itinerary</li>
+                                        <li>Nearby mosques and prayer rooms will be highlighted</li>
+                                        <li>All recommended restaurants are halal-certified</li>
+                                        <li>Prayer breaks will be scheduled in the timeline</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            {# Vegan Food Option #}
+                            <div class="form-check form-switch">
+                                {{ form.vegan_food(class="form-check-input") }}
+                                {{ form.vegan_food.label }}
+                                <div class="form-text">
+                                    We'll ensure all recommended restaurants offer vegan options
+                                </div>
+                            </div>
+
+                            {# Accessibility Option #}
+                            <div class="form-check form-switch">
+                                {{ form.wheelchair_accessible(class="form-check-input") }}
+                                {{ form.wheelchair_accessible.label }}
+                                <div class="form-text">
+                                    {{ form.wheelchair_accessible.description }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Dates Section #}
+                    <div class="section-dates mb-4">
+                        <h4 class="section-title">Travel Dates</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.start_date.label }}
+                                {{ form.start_date(class="form-control", type="date", onchange="validateDatesAndUpdateBudget()") }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.end_date.label }}
+                                {{ form.end_date(class="form-control", type="date", onchange="validateDatesAndUpdateBudget()") }}
+                            </div>
+                        </div>
+                        <div class="form-text mt-2">
+                            <ul class="mb-0">
+                                <li>Maximum trip duration: {{ max_duration }} days (current plan limit)</li>
+                                <li>Start date must be in the future</li>
+                                <li>Consider upgrading your plan for longer trips</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    {# Submit Button #}
+                                        <div class="section-submit">
+                                            <button type="submit" class="btn btn-primary btn-lg w-100" id="generateButton">
+                                                <i class="fas fa-magic me-2"></i>Generate Itinerary
+                                            </button>
+                                            <div class="form-text text-center mt-2">
+                                                Using {{ gpt_model }} for itinerary generation
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endblock %}
+
+{% block scripts %}
+<script>
+// Cache DOM elements
+const form = document.getElementById('itineraryForm');
+const generateButton = document.getElementById('generateButton');
+const halalCheckbox = document.getElementById('halal_food');
+const halalInfo = document.getElementById('halalFoodInfo');
+
+// Initialize form
+document.addEventListener('DOMContentLoaded', function() {
+    initializeForm();
+    updateBudgetDisplay();
+});
+
+function initializeForm() {
+    // Show/hide halal food info
+    if (halalCheckbox) {
+        halalCheckbox.addEventListener('change', function() {
+            halalInfo.style.display = this.checked ? 'block' : 'none';
+        });
+        // Initial state
+        halalInfo.style.display = halalCheckbox.checked ? 'block' : 'none';
+    }
+
+    // Initialize Select All for travel focus
+    const selectAllBtn = document.getElementById('selectAllTravelFocus');
+    if (selectAllBtn) {
+        selectAllBtn.addEventListener('click', toggleAllTravelFocus);
+    }
+}
+
+function toggleAllTravelFocus() {
+    const checkboxes = document.querySelectorAll('input[name="travel_focus"]');
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    checkboxes.forEach(cb => cb.checked = !allChecked);
+    validateForm();
+}
+
+function validateTravelersAndUpdateBudget() {
+    if (validateTravelers()) {
+        updateBudgetDisplay();
+    }
+}
+
+function validateDatesAndUpdateBudget() {
+    if (validateDates()) {
+        updateBudgetDisplay();
+    }
+}
+
+function validateTravelers() {
+    const numAdults = parseInt(document.getElementById('num_adults').value || 0);
+    const numYouth = parseInt(document.getElementById('num_youth').value || 0);
+    const numChildren = parseInt(document.getElementById('num_children').value || 0);
+    const numInfants = parseInt(document.getElementById('num_infants').value || 0);
+    const maxTravelers = parseInt(form.dataset.maxTravelers);
+    const maxInfants = parseInt(form.dataset.maxInfants);
+
+    const totalTravelers = numAdults + numYouth + numChildren;
+    let isValid = true;
+
+    if (totalTravelers > maxTravelers) {
+        showToast('warning', `Maximum ${maxTravelers} travelers allowed in your current plan`);
+        isValid = false;
+    }
+
+    if (numInfants > maxInfants) {
+        showToast('warning', `Maximum ${maxInfants} infants allowed in your current plan`);
+        isValid = false;
+    }
+
+    if ((numChildren > 0 || numInfants > 0) && numAdults < 1) {
+        showToast('warning', 'At least one adult is required when traveling with children or infants');
+        isValid = false;
+    }
+
+    generateButton.disabled = !isValid;
+    return isValid;
+}
+
+function validateDates() {
+    const startDate = new Date(document.getElementById('start_date').value);
+    const endDate = new Date(document.getElementById('end_date').value);
+    const maxDuration = parseInt(form.dataset.maxDuration);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let isValid = true;
+
+    if (startDate < today) {
+        showToast('warning', 'Start date cannot be in the past');
+        isValid = false;
+    }
+
+    if (endDate < startDate) {
+        showToast('warning', 'End date must be after start date');
+        isValid = false;
+    }
+
+    const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    if (duration > maxDuration) {
+        showToast('warning', `Maximum trip duration is ${maxDuration} days in your current plan`);
+        isValid = false;
+    }
+
+    generateButton.disabled = !isValid;
+    return isValid;
+}
+
+function updateBudgetDisplay() {
+    const budgetBreakdown = document.getElementById('budgetBreakdown');
+    const budgetDetails = document.getElementById('budgetDetails');
+    const budgetInput = document.getElementById('budget');
+    const currencySelect = document.getElementById('currency');
+
+    if (!budgetBreakdown || !budgetDetails || !budgetInput || !currencySelect) return;
+
+    const budget = parseFloat(budgetInput.value);
+    if (isNaN(budget)) {
+        budgetBreakdown.style.display = 'none';
+        return;
+    }
+
+    const startDate = new Date(document.getElementById('start_date').value);
+    const endDate = new Date(document.getElementById('end_date').value);
+    const duration = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+
+    const numAdults = parseInt(document.getElementById('num_adults').value || 0);
+    const numYouth = parseInt(document.getElementById('num_youth').value || 0);
+    const numChildren = parseInt(document.getElementById('num_children').value || 0);
+    const totalTravelers = numAdults + numYouth + numChildren;
+
+    if (isNaN(duration) || isNaN(totalTravelers) || duration <= 0 || totalTravelers <= 0) {
+        budgetBreakdown.style.display = 'none';
+        return;
+    }
+
+    const currency = currencySelect.value;
+    const dailyBudget = budget / (duration * totalTravelers);
+
+    budgetBreakdown.style.display = 'block';
+    let breakdownHTML = `
+        <p><strong>Daily Budget per Person:</strong> ${formatCurrency(dailyBudget, currency)}</p>
+        <p><strong>Estimated Breakdown:</strong></p>
+        <ul class="mb-0">
+    `;
+
+    if (document.getElementById('include_flights').checked) {
+        const flightCost = totalTravelers * 2000;
+        const flightPercentage = Math.round((flightCost / budget) * 100);
+        breakdownHTML += `<li>Flights: ${formatCurrency(flightCost, currency)} (${flightPercentage}%)</li>`;
+    }
+
+    if (document.getElementById('include_accommodation').checked) {
+        const accommodationCost = duration * 400;
+        const accommodationPercentage = Math.round((accommodationCost / budget) * 100);
+        breakdownHTML += `<li>Accommodation: ${formatCurrency(accommodationCost, currency)} (${accommodationPercentage}%)</li>`;
+    }
+
+    const dailyExpenses = duration * totalTravelers * 200;
+    const dailyPercentage = Math.round((dailyExpenses / budget) * 100);
+    breakdownHTML += `<li>Daily Expenses: ${formatCurrency(dailyExpenses, currency)} (${dailyPercentage}%)</li>`;
+
+    breakdownHTML += '</ul>';
+    budgetDetails.innerHTML = breakdownHTML;
+}
+
+function formatCurrency(amount, currency) {
+    return new Intl.NumberFormat('en-MY', {
+        style: 'currency',
+        currency: currency
+    }).format(amount);
+}
+
+function showToast(type, message) {
+    // Implementation depends on your toast library
+    if (typeof window.showToast === 'function') {
+        window.showToast(type, message);
+    } else {
+        alert(message);
+    }
+}
+</script>
+{% endblock %}
+

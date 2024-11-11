@@ -1,0 +1,621 @@
+/* Root Variables - Sunset Color Palette */
+:root {
+    --sunset-primary: #FF7B54;    /* Warm orange */
+    --sunset-secondary: #FFB26B;  /* Soft peach */
+    --sunset-accent: #FFD56F;     /* Golden yellow */
+    --sunset-warm: #FFE6C7;       /* Light cream */
+    --sunset-dark: #6B4F4F;       /* Deep brown */
+    --sunset-light: #FFF1E6;      /* Pale peach */
+    --sunset-highlight: #FF6B6B;  /* Coral */
+    --sunset-error: #FF4949;      /* Error red */
+    --sunset-success: #95D1CC;    /* Soft teal */
+    --sunset-warning: #FFD93D;    /* Warning yellow */
+    --text-dark: #4A4A4A;         /* Dark gray */
+    --text-light: #FFFFFF;        /* White */
+    --shadow-color: rgba(107, 79, 79, 0.1);
+}
+
+/* Global Styles */
+body {
+    background: linear-gradient(135deg, var(--sunset-warm), var(--sunset-secondary));
+    color: var(--text-dark);
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--sunset-dark) !important;
+    font-weight: 600;
+}
+
+p, span, div, li {
+    color: var(--text-dark) !important;
+}
+
+/* Invalid Messages and Error States */
+.invalid-feedback, 
+.error-message,
+.text-danger {
+    color: var(--sunset-error) !important;
+    font-weight: 500;
+}
+
+/* Navbar Styling */
+.navbar {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--sunset-accent);
+    padding: 1rem;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: var(--text-light) !important;
+    transition: color 0.3s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: var(--sunset-warm) !important;
+    transform: translateY(-2px);
+}
+
+.navbar-dark .navbar-brand {
+    color: var(--text-light) !important;
+    font-weight: bold;
+}
+
+/* Card Styling */
+.card {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.9)) !important;
+    border: none !important;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px var(--shadow-color);
+}
+
+.card-header {
+    background: linear-gradient(90deg, var(--sunset-secondary), var(--sunset-accent)) !important;
+    border-bottom: 1px solid var(--sunset-accent) !important;
+    color: var(--text-dark) !important;
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.card-body {
+    color: var(--text-dark) !important;
+}
+
+.card-title {
+    color: var(--sunset-dark) !important;
+    font-weight: 600;
+}
+
+/* Homepage Statistics Section */
+.stat-card {
+    background: linear-gradient(135deg, var(--sunset-primary), var(--sunset-secondary));
+    border-radius: 15px;
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: none;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px var(--shadow-color);
+}
+.stat-number {
+    color: var(--text-light) !important;
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+.stat-label {
+    color: var(--sunset-light) !important;
+    font-weight: 500;
+}
+
+/* Pricing Table Styles */
+.pricing-card {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.9));
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.pricing-card:hover {
+    transform: translateY(-10px);
+}
+
+.pricing-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.pricing-header {
+    background: linear-gradient(90deg, var(--sunset-secondary), var(--sunset-accent));
+    color: var(--text-dark) !important;
+    border-radius: 15px 15px 0 0;
+}
+
+.pricing-features {
+    flex: 1;
+}
+
+/* New Pricing Toggle Styling */
+.pricing-toggle-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+    gap: 1rem;
+}
+
+.pricing-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    margin: 0 10px;
+}
+
+/* Feature List Styling */
+.pricing-features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pricing-features-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+/* Feature Icons */
+.feature-icon {
+    position: absolute;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-right: 0.5rem;
+}
+
+.feature-icon.included {
+    color: var(--sunset-success);
+}
+
+.feature-icon.not-included {
+    color: var(--sunset-error);
+}
+
+/* Pricing Badge */
+.pricing-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-highlight));
+    color: var(--text-light);
+    padding: 0.25rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styling */
+.btn-primary {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    border: none !important;
+    color: var(--text-light) !important;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--shadow-color);
+    opacity: 0.9;
+}
+
+/* Toggle Switch Styling */
+.form-check-input:checked {
+    background-color: var(--sunset-success) !important;
+    border-color: var(--sunset-success) !important;
+}
+
+.form-check-input:not(:checked) {
+    background-color: var(--sunset-error) !important;
+    border-color: var(--sunset-error) !important;
+}
+
+/* Toast Notifications */
+.toast {
+    background: var(--sunset-light) !important;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+.toast-header {
+    background: var(--sunset-secondary) !important;
+    color: var(--text-dark) !important;
+    border-radius: 10px 10px 0 0;
+}
+
+.toast.success .toast-header {
+    background: var(--sunset-success) !important;
+}
+
+.toast.warning .toast-header {
+    background: var(--sunset-warning) !important;
+}
+
+.toast.error .toast-header {
+    background: var(--sunset-error) !important;
+}
+
+/* Footer Styling */
+footer, .footer {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    color: var(--text-light) !important;
+    padding: 2rem 0;
+    margin-top: 3rem;
+}
+
+footer a, .footer a {
+    color: var(--text-light) !important;
+    transition: color 0.3s ease;
+}
+
+footer a:hover, .footer a:hover {
+    color: var(--sunset-warm) !important;
+    text-decoration: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .stat-number {
+        font-size: 2rem;
+    }
+
+    .card {
+        margin: 0.5rem 0;
+    }
+
+    .pricing-badge {
+        right: 10px;
+    }
+}
+
+/* Progress Bar Styling */
+.progress {
+    background-color: var(--sunset-light);
+    border-radius: 10px;
+    height: 15px !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin: 1rem 0;
+    border: 1px solid var(--sunset-secondary);
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    border-radius: 10px;
+    position: relative;
+    transition: width 0.6s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Animation Keyframes */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
+}
+
+/* Leadership Section Styling */
+.card-body .h5, 
+.card-body .text-muted,
+.card-body p {
+    color: var(--text-dark) !important;
+    opacity: 1;
+}
+
+.text-muted {
+    color: var(--sunset-dark) !important;
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+/* Specific styling for CEO title */
+.card-body h4.h5 {
+    color: var(--sunset-dark) !important;
+    font-weight: 600;
+}
+
+/* FAQ Accordion Styling */
+.accordion-button {
+    background: linear-gradient(90deg, var(--sunset-secondary), var(--sunset-accent)) !important;
+    color: var(--text-dark) !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: all 0.3s ease;
+}
+
+.accordion-button:not(.collapsed) {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    color: var(--text-light) !important;
+}
+
+.accordion-button::after {
+    color: var(--text-dark);
+    background-color: var(--sunset-light);
+    border-radius: 50%;
+}
+
+.accordion-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px var(--shadow-color) !important;
+}
+
+/* FAQ Accordion Body Styling */
+.accordion-body {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.95)) !important;
+    color: var(--text-dark) !important;
+    padding: 1.5rem;
+    border-radius: 0 0 10px 10px;
+}
+
+.accordion-item {
+    background: transparent !important;
+    border: none !important;
+    margin-bottom: 0.5rem;
+}
+
+/* About Us List Group Styling */
+.list-group-item {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.95)) !important;
+    color: var(--text-dark) !important;
+    border: 1px solid var(--sunset-secondary) !important;
+    margin-bottom: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    transform: translateX(5px);
+    background: linear-gradient(135deg, var(--sunset-secondary), var(--sunset-accent)) !important;
+    color: var(--text-dark) !important;
+}
+
+.list-group {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+/* Country Card Styling */
+.country-card {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.9)) !important;
+    border: none !important;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px var(--shadow-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+    padding: 1.5rem;
+}
+
+.country-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 25px var(--shadow-color);
+}
+
+.country-icon {
+    color: var(--sunset-dark);
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.stat-list {
+    color: var(--text-dark);
+}
+
+.stat-item {
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    color: var(--sunset-primary);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* Tooltip customization */
+.tooltip {
+    opacity: 0.98 !important;
+}
+
+.tooltip-inner {
+    background: linear-gradient(135deg, var(--sunset-primary), var(--sunset-secondary)) !important;
+    color: var(--text-light) !important;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: var(--sunset-primary) !important;
+}
+
+/* Mission Card Specific Styling */
+.mission-card {
+    background: linear-gradient(135deg, var(--sunset-light), rgba(255, 255, 255, 0.9)) !important;
+    color: var(--text-dark) !important;
+}
+
+/* Coming Soon Section */
+.coming-soon {
+    background: linear-gradient(135deg, var(--sunset-secondary), var(--sunset-accent));
+    color: var(--text-dark) !important;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 4px 15px var(--shadow-color);
+}
+
+/* Usage Text Styling */
+.usage-status small.text-muted {
+    color: var(--text-dark) !important;
+    font-weight: 500;
+    opacity: 1 !important;
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Advanced Pricing Features */
+.pricing-comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    margin: 2rem 0;
+}
+
+.pricing-comparison-table th,
+.pricing-comparison-table td {
+    padding: 1rem;
+    text-align: center;
+    background: var(--sunset-light);
+    border: none;
+}
+
+.pricing-comparison-table th:first-child,
+.pricing-comparison-table td:first-child {
+    text-align: left;
+    border-radius: 10px 0 0 10px;
+}
+
+.pricing-comparison-table th:last-child,
+.pricing-comparison-table td:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
+.pricing-comparison-table th {
+    background: linear-gradient(90deg, var(--sunset-primary), var(--sunset-secondary));
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.pricing-comparison-row:hover td {
+    background: linear-gradient(135deg, var(--sunset-secondary), var(--sunset-accent));
+    transform: scale(1.02);
+    transition: all 0.3s ease;
+}
+
+/* Feature Highlight Animation */
+@keyframes featureHighlight {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0); }
+}
+
+.feature-highlight {
+    animation: featureHighlight 2s infinite;
+}
+
+/* Custom Switch for Pricing Toggle */
+.custom-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.custom-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.custom-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--sunset-light);
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.custom-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background: var(--sunset-primary);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .custom-switch-slider {
+    background: var(--sunset-success);
+}
+
+input:checked + .custom-switch-slider:before {
+    transform: translateX(26px);
+}
+
+/* Additional Responsive Adjustments */
+@media (max-width: 576px) {
+    .pricing-comparison-table {
+        font-size: 0.875rem;
+    }
+
+    .pricing-toggle-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .pricing-badge {
+        font-size: 0.75rem;
+        right: 10px;
+        top: -10px;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .pricing-card {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .pricing-badge {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+    }
+}
+
+/* Custom badge styling */
+.badge.bg-primary {
+    background-color: #3B82F6 !important; /* Lighter blue background */
+    color: #ffffff !important; /* White text */
+}
+/* If you want a specific style just for the basic tier */
+.badge.bg-primary.basic-tier {
+    background-color: #60A5FA !important; /* Even lighter blue */
+    color: #ffffff !important;
+}

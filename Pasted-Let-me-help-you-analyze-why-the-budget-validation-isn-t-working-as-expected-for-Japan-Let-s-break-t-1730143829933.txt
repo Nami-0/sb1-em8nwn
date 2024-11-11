@@ -1,0 +1,57 @@
+Let me help you analyze why the budget validation isn't working as expected for Japan. Let's break this down step by step:
+
+First, let's calculate what the minimum budget should be for Japan based on the rules in destination_validation.py:
+
+# Japan's minimum daily costs:
+base = 200          # Base expenses
+accommodation = 200 # Accommodation
+flights = 400      # Flights
+For your test case:
+
+Total budget: MYR 1000
+Duration: 7 days
+People: 2
+Budget per person per day = 1000 / (2 * 7) ≈ MYR 71.43
+The issue appears to be in the validation flow in views.py. The validation is happening but the response might not be properly handled. Let's add more detailed validation logging:
+
+@main_views.route('/itinerary', methods=['GET', 'POST'])
+def itinerary_form():
+    form = ItineraryForm()
+    if form.validate_on_submit():
+        # Add detailed logging for budget validation
+        is_valid, messages = validate_budget_and_duration(
+            form.destinations.data,
+            form.budget.data,
+            form.num_people.data,
+            form.start_date.data,
+            form.end_date.data,
+            form.include_flights.data,
+            form.include_accommodation.data
+        )
+        
+        # Log validation results
+        logger.debug(f"Budget validation - Valid: {is_valid}, Messages: {messages}")
+        
+        if not is_valid:
+            for message in messages:
+                flash(message, 'warning')
+            return render_template('itinerary_form.html', form=form, openai_api_available=is_openai_available())
+The validation logic in destination_validation.py looks correct, but let's add some debug logging:
+def validate_budget_and_duration(destination, budget, num_people, start_date, end_date, include_flights=True, include_accommodation=True):
+    rules = get_destination_rules(destination)
+    duration = (end_date - start_date).days + 1
+    budget_per_person_per_day = budget / (num_people * duration)
+    
+    # Add debug logging
+    logger.debug(f"Validating budget:")
+    logger.debug(f"Budget per person per day: MYR {budget_per_person_per_day:.2f}")
+    logger.debug(f"Minimum required budget: MYR {calculate_min_budget_per_day(rules, include_flights, include_accommodation):.2f}")
+The validation should show an error message for Japan because:
+
+Required minimum per day: 200 (base) + 200 (accommodation) + 400 (flights) = MYR 800 per person per day
+Your input: MYR 71.43 per person per day
+To fix this:
+
+Check if the error messages are being properly flashed to the template
+Verify the form's destination value matches the expected key in DESTINATION_RULES
+Make sure the JavaScript validation in main.js isn't interfering with the server-side validation

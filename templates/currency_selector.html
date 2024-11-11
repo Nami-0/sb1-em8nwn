@@ -1,0 +1,235 @@
+{% macro render_currency_selector(selected_currency='MYR', 
+                               form_name=None, 
+                               field_name=None, 
+                               show_flags=True, 
+                               class_names='', 
+                               with_label=True) %}
+
+{# Container with optional label #}
+<div class="currency-selector-container">
+    {% if with_label %}
+    <label class="form-label" for="{{ field_name or 'currency' }}">
+        Currency
+        {% if show_flags %}
+            <i class="fas fa-globe-asia ms-1"></i>
+        {% endif %}
+    </label>
+    {% endif %}
+
+    {# Main Select Component #}
+    <select class="form-select {{ class_names }}" 
+            id="{{ field_name or 'currency' }}"
+            name="{{ field_name or 'currency' }}"
+            data-original="{{ selected_currency }}"
+            {% if form_name %}form="{{ form_name }}"{% endif %}>
+
+        {# ASEAN Currencies Group #}
+        <optgroup label="ASEAN Currencies">
+            <option value="MYR" {% if selected_currency == 'MYR' %}selected{% endif %}>
+                {% if show_flags %}🇲🇾{% endif %} MYR - Malaysian Ringgit
+            </option>
+            <option value="SGD" {% if selected_currency == 'SGD' %}selected{% endif %}>
+                {% if show_flags %}🇸🇬{% endif %} SGD - Singapore Dollar
+            </option>
+            <option value="THB" {% if selected_currency == 'THB' %}selected{% endif %}>
+                {% if show_flags %}🇹🇭{% endif %} THB - Thai Baht
+            </option>
+            <option value="IDR" {% if selected_currency == 'IDR' %}selected{% endif %}>
+                {% if show_flags %}🇮🇩{% endif %} IDR - Indonesian Rupiah
+            </option>
+            <option value="PHP" {% if selected_currency == 'PHP' %}selected{% endif %}>
+                {% if show_flags %}🇵🇭{% endif %} PHP - Philippine Peso
+            </option>
+            <option value="VND" {% if selected_currency == 'VND' %}selected{% endif %}>
+                {% if show_flags %}🇻🇳{% endif %} VND - Vietnamese Dong
+            </option>
+        </optgroup>
+
+        {# East Asian Currencies Group #}
+            <optgroup label="East Asian Currencies">
+                <option value="JPY" {% if selected_currency == 'JPY' %}selected{% endif %}>
+                    {% if show_flags %}🇯🇵{% endif %} JPY - Japanese Yen
+                </option>
+                <option value="KRW" {% if selected_currency == 'KRW' %}selected{% endif %}>
+                    {% if show_flags %}🇰🇷{% endif %} KRW - South Korean Won
+                </option>
+                <option value="CNY" {% if selected_currency == 'CNY' %}selected{% endif %}>
+                    {% if show_flags %}🇨🇳{% endif %} CNY - Chinese Yuan
+                </option>
+                <option value="HKD" {% if selected_currency == 'HKD' %}selected{% endif %}>
+                    {% if show_flags %}🇭🇰{% endif %} HKD - Hong Kong Dollar
+                </option>
+                <option value="TWD" {% if selected_currency == 'TWD' %}selected{% endif %}>
+                    {% if show_flags %}🇹🇼{% endif %} TWD - Taiwan Dollar
+                </option>
+            </optgroup>
+
+            {# Major World Currencies Group #}
+            <optgroup label="Major World Currencies">
+                <option value="USD" {% if selected_currency == 'USD' %}selected{% endif %}>
+                    {% if show_flags %}🇺🇸{% endif %} USD - US Dollar
+                </option>
+                <option value="EUR" {% if selected_currency == 'EUR' %}selected{% endif %}>
+                    {% if show_flags %}🇪🇺{% endif %} EUR - Euro
+                </option>
+                <option value="GBP" {% if selected_currency == 'GBP' %}selected{% endif %}>
+                    {% if show_flags %}🇬🇧{% endif %} GBP - British Pound
+                </option>
+                <option value="AUD" {% if selected_currency == 'AUD' %}selected{% endif %}>
+                    {% if show_flags %}🇦🇺{% endif %} AUD - Australian Dollar
+                </option>
+                <option value="NZD" {% if selected_currency == 'NZD' %}selected{% endif %}>
+                    {% if show_flags %}🇳🇿{% endif %} NZD - New Zealand Dollar
+                </option>
+            </optgroup>
+
+            {# Middle Eastern Currencies Group #}
+            <optgroup label="Middle Eastern Currencies">
+                <option value="AED" {% if selected_currency == 'AED' %}selected{% endif %}>
+                    {% if show_flags %}🇦🇪{% endif %} AED - UAE Dirham
+                </option>
+                <option value="SAR" {% if selected_currency == 'SAR' %}selected{% endif %}>
+                    {% if show_flags %}🇸🇦{% endif %} SAR - Saudi Riyal
+                </option>
+                <option value="QAR" {% if selected_currency == 'QAR' %}selected{% endif %}>
+                    {% if show_flags %}🇶🇦{% endif %} QAR - Qatari Riyal
+                </option>
+            </optgroup>
+        </select>
+
+    {# Exchange Rate Display #}
+        <div class="exchange-rate-info mt-2" style="display: none;">
+            <small class="text-muted">
+                <span class="rate-display">1 {{ selected_currency }} = <span class="converted-rate"></span></span>
+                <br>
+                <span class="rate-timestamp"></span>
+            </small>
+        </div>
+
+        {# Loading Indicator #}
+        <div class="currency-loading" style="display: none;">
+            <div class="spinner-border spinner-border-sm text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+
+    {# Cache Info - For debugging only #}
+    {% if debug %}
+    <div class="cache-info mt-1">
+        <small class="text-muted">
+            Cache Status: <span class="cache-status"></span>
+            <br>
+            Cache Expires: <span class="cache-expiry"></span>
+        </small>
+    </div>
+    {% endif %}
+
+    {# JavaScript for Currency Selector #}
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selector = document.getElementById('{{ field_name or "currency" }}');
+        const rateInfo = selector.parentElement.querySelector('.exchange-rate-info');
+        const loading = selector.parentElement.querySelector('.currency-loading');
+
+        if (!selector) return;
+
+        // Initialize with cached rate if available
+        updateExchangeRate(selector.value);
+
+        // Update on change
+        selector.addEventListener('change', function() {
+            updateExchangeRate(this.value);
+        });
+
+        async function updateExchangeRate(currency) {
+            if (currency === 'MYR') {
+                rateInfo.style.display = 'none';
+                return;
+            }
+
+            try {
+                loading.style.display = 'block';
+                rateInfo.style.display = 'none';
+
+                // Try to get from cache first
+                const cacheKey = `exchange_rate:${currency}:MYR`;
+                let rate = await getCachedRate(cacheKey);
+
+                if (!rate) {
+                    // Fetch new rate if not in cache
+                    rate = await fetchExchangeRate(currency);
+                    // Cache the new rate
+                    await cacheRate(cacheKey, rate);
+                }
+
+                // Update display
+                const rateDisplay = rateInfo.querySelector('.converted-rate');
+                const timestamp = rateInfo.querySelector('.rate-timestamp');
+
+                rateDisplay.textContent = `${rate.toFixed(4)} MYR`;
+                timestamp.textContent = `Last updated: ${new Date().toLocaleString()}`;
+
+                rateInfo.style.display = 'block';
+            } catch (error) {
+                console.error('Error updating exchange rate:', error);
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        async function getCachedRate(key) {
+            try {
+                const response = await fetch(`/api/cache/${key}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.value;
+                }
+            } catch (error) {
+                console.warn('Cache miss:', error);
+            }
+            return null;
+        }
+
+        async function cacheRate(key, value) {
+            try {
+                await fetch('/api/cache', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        key: key,
+                        value: value,
+                        expiry: 3600 // 1 hour cache
+                    })
+                });
+            } catch (error) {
+                console.warn('Failed to cache rate:', error);
+            }
+        }
+
+        async function fetchExchangeRate(currency) {
+            // Implement your exchange rate API call here
+            // For now, return a dummy rate
+            return 1.0;
+        }
+    });
+    </script>
+    {% endmacro %}
+
+{# Example usage in another template #}
+{% from "currency_selector.html" import render_currency_selector %}
+
+{# Basic usage #}
+{{ render_currency_selector() }}
+
+{# Advanced usage with all options #}
+{{ render_currency_selector(
+    selected_currency=user_currency,
+    form_name="itineraryForm",
+    field_name="preferred_currency",
+    show_flags=True,
+    class_names="custom-select",
+    with_label=True
+) }}

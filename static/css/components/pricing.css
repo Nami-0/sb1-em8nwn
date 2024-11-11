@@ -1,0 +1,114 @@
+/* Add to your static/css/components/pricing.css */
+
+.pricing-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.pricing-toggle-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.pricing-card {
+    height: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 1rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.pricing-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.25rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.pricing-features {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+}
+
+.pricing-features li {
+    padding: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+}
+
+/* Emoji styling */
+.pricing-features li:has(span:first-child:contains("✔️")) {
+    color: #16a34a; /* Success green */
+}
+
+.pricing-features li:has(span:first-child:contains("❌")) {
+    color: #dc2626; /* Error red */
+    opacity: 0.75;
+}
+
+/* Price styling */
+.price-amount {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.price-period {
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+/* Popular plan highlight */
+.pricing-card[data-plan="gold_wanderer"] {
+    border: 2px solid #f59e0b;
+    background: linear-gradient(to bottom, #fffbeb, #ffffff);
+}
+
+/* Toggle switch styling */
+.billing-toggle {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem;
+    background-color: #f3f4f6;
+    border-radius: 9999px;
+}
+
+.billing-toggle button {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.billing-toggle button.active {
+    background-color: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Savings badge */
+.savings-badge {
+    background-color: #dcfce7;
+    color: #16a34a;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}

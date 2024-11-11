@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Your Itinerary{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Your Travel Itinerary</h2>
+        <button class="btn btn-primary" onclick="window.print()">Print Itinerary</button>
+    </div>
+    <div class="card-body">
+        <div class="itinerary-details">
+            <h3>Trip Details</h3>
+            <ul class="list-unstyled">
+                <li><strong>Focus:</strong> {{ itinerary.travel_focus|join(', ') }}</li>
+                <li><strong>Budget:</strong> MYR {{ "%.2f"|format(itinerary.budget) }}
+                    <small class="text-muted">
+                        ({{ "Including" if itinerary.include_flights else "Excluding" }} flights,
+                        {{ "Including" if itinerary.include_accommodation else "Excluding" }} accommodation)
+                    </small>
+                </li>
+                <li><strong>People:</strong> {{ itinerary.num_people }}</li>
+                <li><strong>Dates:</strong> {{ itinerary.start_date.strftime('%d %B %Y') }} - {{ itinerary.end_date.strftime('%d %B %Y') }}</li>
+            </ul>
+        </div>
+
+        <div class="itinerary-content">
+            {{ itinerary.content|safe }}
+        </div>
+    </div>
+</div>
+{% endblock %}

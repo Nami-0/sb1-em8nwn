@@ -1,0 +1,130 @@
+Here's a comprehensive security plan for your Replit application:
+
+DDoS Protection:
+# In views.py, add rate limiting
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"]
+)
+# Apply to sensitive routes
+@main_views.route('/itinerary', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")  # Protect against form spam
+def itinerary_form():
+    # ... existing code
+Security Headers Integration:
+# Add to views.py
+from flask_talisman import Talisman
+def security_headers():
+    return {
+        'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline' cdn.jsdelivr.net",
+        'X-Frame-Options': 'SAMEORIGIN',
+        'X-XSS-Protection': '1; mode=block',
+        'X-Content-Type-Options': 'nosniff',
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
+    }
+Talisman(app, 
+    content_security_policy=security_headers()['Content-Security-Policy'],
+    force_https=True
+)
+Input Validation & Sanitization:
+# Add to forms.py
+from wtforms.validators import DataRequired, Length, ValidationError
+import bleach
+class ItineraryForm(FlaskForm):
+    def sanitize_input(self, field):
+        if field.data:
+            # Sanitize HTML and script tags
+            field.data = bleach.clean(field.data, 
+                tags=[], 
+                strip=True
+            )
+    
+    def validate_destinations(self, field):
+        self.sanitize_input(field)
+        if len(field.data) > 100:
+            raise ValidationError('Input too long')
+User Authentication Security:
+# Add to views.py
+from werkzeug.security import generate_password_hash
+import secrets
+def secure_user_session():
+    # Generate secure session token
+    session['csrf_token'] = secrets.token_hex(32)
+    # Set secure session configs
+    app.config.update(
+        SESSION_COOKIE_SECURE=True,
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SAMESITE='Lax',
+        PERMANENT_SESSION_LIFETIME=timedelta(hours=1)
+    )
+Database Security:
+# Add to models.py
+from sqlalchemy import event
+@event.listens_for(Itinerary, 'before_insert')
+def hash_sensitive_data(mapper, connection, target):
+    if target.specific_locations:
+        target.specific_locations = generate_password_hash(target.specific_locations)
+class Itinerary(db.Model):
+    # Add data validation
+    __table_args__ = (
+        db.CheckConstraint('budget > 0', name='check_positive_budget'),
+        db.CheckConstraint('num_people > 0', name='check_positive_people')
+    )
+Logging and Monitoring:
+# Add to views.py
+import logging
+from logging.handlers import RotatingFileHandler
+def setup_security_logging():
+    handler = RotatingFileHandler('security.log', maxBytes=10000, backupCount=3)
+    handler.setLevel(logging.WARNING)
+    
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    handler.setFormatter(formatter)
+    app.logger.addHandler(handler)
+# Log security events
+@main_views.before_request
+def log_request_info():
+    app.logger.warning('IP: %s, Path: %s, Method: %s', 
+        request.remote_addr,
+        request.path,
+        request.method
+    )
+Error Handling:
+# Add to views.py
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('404.html'), 404
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()  # Roll back failed database transactions
+    return render_template('500.html'), 500
+API Security:
+# Add to itinerary_generator.py
+def secure_api_call(api_key):
+    # Validate API key format
+    if not isinstance(api_key, str) or len(api_key) != 51:
+        raise ValueError("Invalid API key format")
+        
+    # Rate limiting for API calls
+    cache_key = f"api_calls_{datetime.now().strftime('%Y-%m-%d')}"
+    call_count = cache.get(cache_key, 0)
+    
+    if call_count > MAX_DAILY_CALLS:
+        raise Exception("API call limit exceeded")
+    
+    cache.incr(cache_key)
+These security measures will help protect against:
+
+DDoS attacks through rate limiting
+XSS attacks via content security policies
+SQL injection through parameterized queries
+CSRF attacks using tokens
+Session hijacking with secure cookies
+Data leaks through input validation
+Brute force attacks via rate limiting
+Server information disclosure

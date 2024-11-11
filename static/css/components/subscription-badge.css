@@ -1,0 +1,43 @@
+/* static/css/components/subscription-badge.css */
+.subscription-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-weight: 500;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.badge-solo-backpacker {
+    background-color: #6B7280;
+    color: white;
+}
+
+.badge-tandem-trekker {
+    background-color: #3B82F6;
+    color: white;
+}
+
+.badge-gold-wanderer {
+    background-color: #F59E0B;
+    color: white;
+}
+
+.badge-business {
+    background-color: #1F2937;
+    color: white;
+}
+
+.status-active {
+    background-color: #10B981;
+}
+
+.status-expired {
+    background-color: #EF4444;
+}

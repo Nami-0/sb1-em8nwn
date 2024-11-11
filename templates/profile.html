@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+
+<div class="container">
+    <div class="row">
+        {# Subscription Status Card #}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Subscription Status</h5>
+                </div>
+
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <h4 class="mb-0">
+                            <div class="subscription-badge badge-{{ current_user.subscription_tier }}">
+                                {{ current_user.subscription_tier|replace('_', ' ')|title }}
+                                <span class="status-indicator status-{{ current_user.subscription_status }}"></span>
+                            </div>
+
+                            {% if current_user.subscription_tier == 'solo_backpacker' %}
+                                <span class="badge bg-secondary ms-2">Free</span>
+                            {% elif current_user.subscription_tier == 'tandem_trekker' %}
+                                <span class="badge bg-primary ms-2">Basic</span>
+                            {% elif current_user.subscription_tier == 'gold_wanderer' %}
+                                <span class="badge bg-warning ms-2">Premium</span>
+                            {% else %}
+                                <span class="badge bg-dark ms-2">Business</span>
+                            {% endif %}
+                        </h4>
+                    </div>
+
+                    {# AI Model Information #}
+                    <div class="subscription-ai-info mb-3">
+                        <h6>AI Model Access:</h6>
+                        {% if current_user.subscription_tier in ['gold_wanderer', 'business'] %}
+                            <div class="alert alert-success">
+                                <i class="fas fa-robot"></i> GPT-4 (Advanced AI)
+                                <div class="small">Premium AI model for superior itinerary generation</div>
+                            </div>
+                        {% else %}
+                            <div class="alert alert-info">
+                                <i class="fas fa-robot"></i> GPT-3.5 (Standard AI)
+                                <div class="small">Upgrade to access our advanced AI model (GPT-4)</div>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {# Plan Features #}
+                    <div class="subscription-limits mb-3">
+                        <h6>Your Plan Features:</h6>
+                        <ul class="list-unstyled">
+                            <li>
+                                {% if current_user.subscription_tier == 'business' %}
+                                    <i class="fas fa-infinity"></i> Unlimited itineraries
+                                {% else %}
+                                    <i class="fas fa-calendar-alt"></i> {{ current_user.max_itineraries_per_month }} itineraries per month
+                                {% endif %}
+                            </li>
+                            <li><i class="fas fa-clock"></i> Up to {{ current_user.max_duration }} days per trip</li>
+                            <li><i class="fas fa-users"></i> Maximum {{ current_user.max_travelers }} travelers</li>
+                            <li>
+                                <i class="fas fa-brain"></i> 
+                                {% if current_user.has_advanced_ai %}Advanced{% else %}Basic{% endif %} 
+                                AI recommendations
+                            </li>
+                            <li>
+                                <i class="fas fa-file-pdf"></i> PDF Export 
+                                {% if not current_user.can_export_pdf %}
+                                    <span class="badge bg-secondary">Premium feature</span>
+                                {% endif %}
+                            </li>
+                            <li>
+                                <i class="fas fa-user-friends"></i> Travel Buddy Access 
+                                {% if not current_user.can_access_travel_buddy %}
+                                    <span class="badge bg-secondary">Premium feature</span>
+                                {% endif %}
+                                <span class="badge bg-warning text-dark">Coming Soon</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    {# Usage Status Section #}
+                                <div class="usage-status mb-3">
+                                    <h6>Current Usage:</h6>
+                                    {% with usage = current_user.calculate_usage_percentage() %}
+                                        {% if current_user.subscription_tier != 'business' %}
+                                            <div class="progress mb-2">
+                                                <div class="progress-bar {% if usage[0] > 80 %}bg-warning{% endif %}" 
+                                                     role="progressbar" 
+                                                     style="width: {{ usage[0] }}%" 
+                                                     aria-valuenow="{{ current_user.itineraries_generated_this_month }}"
+                                                     aria-valuemin="0" 
+                                                     aria-valuemax="{{ current_user.max_itineraries_per_month }}">
+                                                </div>
+                                            </div>
+
+                                            <small>{{ current_user.itineraries_generated_this_month }} of 
+                                                {{ current_user.max_itineraries_per_month }} itineraries used this month ({{ usage[0] }}%)</small>
+
+                                            {% if usage[0] > 80 %}
+                                                <div class="alert alert-warning mt-2">
+                                                    <small>You're approaching your monthly limit. Consider upgrading your plan.</small>
+                                                </div>
+                                            {% endif %}
+                                        {% else %}
+                                            <div class="alert alert-success">
+                                                <i class="fas fa-infinity"></i> Unlimited usage available
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
+
+                                    {% if current_user.days_until_reset > 0 %}
+                                        <small class="text-muted">Resets in {{ current_user.days_until_reset }} days</small>
+                                    {% endif %}
+                                </div>
+
+                                {# Subscription Actions #}
+                                {% if current_user.subscription_tier == 'solo_backpacker' %}
+                                    <a href="{{ url_for('main_views.pricing') }}" class="btn btn-primary w-100">Upgrade Now</a>
+                                {% elif current_user.subscription_tier != 'business' %}
+                                    <div class="d-grid gap-2">
+                                        <a href="{{ url_for('main_views.pricing') }}" class="btn btn-outline-primary">Change Plan</a>
+                                        {% if current_user.stripe_customer_id %}
+                                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelSubscriptionModal">
+                                                Cancel Subscription
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    {# Profile Management Section - Start #}
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">Profile Management</h5>
+                            </div>
+
+                            <div class="card-body">
+                                {% with messages = get_flashed_messages(with_categories=true) %}
+                                    {% if messages %}
+                                        {% for category, message in messages %}
+                                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                                {{ message }}
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endwith %}
+
+                                <form method="POST">
+                                    {{ form.csrf_token }}
+
+                                    {# Email Display #}
+                                    <div class="mb-3">
+                                        <label class="form-label">Email</label>
+                                        <input type="email" class="form-control" value="{{ current_user.email }}" disabled>
+                                        <div class="form-text">
+                                            Email cannot be changed as it's linked to your Google account
+                                        </div>
+                                    </div>
+
+                                    {# Username Field #}
+                                    <div class="mb-3">
+                                        {{ form.username.label }}
+                                        {{ form.username(class="form-control") }}
+                                        {% if form.username.errors %}
+                                            {% for error in form.username.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+
+                                    {# Phone Number Field #}
+                                    <div class="mb-3">
+                                        {{ form.phone_number.label }}
+                                        <span class="badge bg-warning text-dark ms-2">Verification Coming Soon!</span>
+                                        {{ form.phone_number(class="form-control", placeholder="+60 XX-XXXX-XXXX") }}
+                                        {% if form.phone_number.errors %}
+                                            {% for error in form.phone_number.errors %}
+                                                <div class="invalid-feedback d-block">
+                                                    {{ error }}
+                                                </div>
+                                            {% endfor %}
+                                        {% endif %}
+                                        <div class="form-text">
+                                            Enter your phone number in international format (e.g., +60 12-3456-7890). 
+                                            Phone number verification feature will be available soon!
+                                        </div>
+                                    </div>
+
+                                    {# Preferred Currency Field #}
+                                    <div class="mb-3">
+                                        {{ form.preferred_currency.label }}
+                                        {{ form.preferred_currency(class="form-select") }}
+                                        <div class="form-text">
+                                            Select your preferred currency for itinerary budgets and price displays
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                                </form>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+
+                                {# Cancel Subscription Modal #}
+                                <div class="modal fade" id="cancelSubscriptionModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                <div class="modal-content">
+                                <div class="modal-header">
+                                <h5 class="modal-title">Cancel Subscription</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                <p>Are you sure you want to cancel your subscription?</p>
+                                <ul>
+                                <li>Your plan will be active until the end of the current billing period</li>
+                                <li>You'll lose access to premium features after that</li>
+                                <li>Your account will revert to the free tier</li>
+                                </ul>
+                                </div>
+                                <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Keep My Plan</button>
+                                <form action="{{ url_for('main_views.cancel_subscription') }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger">Cancel Subscription</button>
+                                </form>
+                                </div>
+                                </div>
+                                </div>
+                                </div>
+                                {% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Handle currency change
+    const currencySelect = document.getElementById('preferred_currency');
+    if (currencySelect) {
+        currencySelect.addEventListener('change', function() {
+            // Show confirmation if changing from existing preference
+            if (this.dataset.original && this.dataset.original !== this.value) {
+                if (!confirm('Changing your preferred currency will affect how prices are displayed in your itineraries. Continue?')) {
+                    this.value = this.dataset.original;
+                    return;
+                }
+            }
+        });
+    }
+
+    // Handle subscription cancellation confirmation
+    const cancelSubForm = document.querySelector('#cancelSubscriptionModal form');
+    if (cancelSubForm) {
+        cancelSubForm.addEventListener('submit', function(e) {
+            if (!confirm('This action cannot be undone. Are you absolutely sure?')) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    // Update usage stats in real-time if needed
+    function updateUsageStats() {
+        const usageElement = document.querySelector('.usage-status');
+        if (usageElement) {
+            fetch('/api/usage-stats')
+                .then(response => response.json())
+                .then(data => {
+                    // Update progress bar
+                    const progressBar = usageElement.querySelector('.progress-bar');
+                    if (progressBar) {
+                        progressBar.style.width = data.percentage + '%';
+                        progressBar.classList.toggle('bg-warning', data.percentage > 80);
+                    }
+                    // Update usage text
+                    const usageText = usageElement.querySelector('small');
+                    if (usageText) {
+                        usageText.textContent = `${data.used} of ${data.total} itineraries used this month (${data.percentage}%)`;
+                    }
+                })
+                .catch(error => console.error('Error updating usage stats:', error));
+        }
+    }
+
+    // Cache-aware usage stats update
+    let lastUpdate = localStorage.getItem('lastUsageUpdate');
+    if (!lastUpdate || (Date.now() - lastUpdate) > 300000) { // 5 minutes cache
+        updateUsageStats();
+        localStorage.setItem('lastUsageUpdate', Date.now());
+    }
+});
+</script>
+{% endblock %}

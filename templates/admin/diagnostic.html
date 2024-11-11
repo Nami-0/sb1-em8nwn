@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Subscription Diagnostics{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1>Subscription Diagnostics Dashboard</h1>
+            <p class="text-muted">Real-time monitoring of subscription features and limits</p>
+        </div>
+    </div>
+
+    {% if not current_user.is_admin %}
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        Access Denied: This page is restricted to administrators only.
+    </div>
+    {% else %}
+    <div class="row">
+        <!-- Subscription Tiers Overview -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title h5 mb-0">Subscription Tiers Overview</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Feature</th>
+                                    <th>Explorer (Free)</th>
+                                    <th>Gold Wanderer</th>
+                                    <th>Platinum Voyager</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Monthly Itineraries</td>
+                                    <td>3</td>
+                                    <td>10</td>
+                                    <td>Unlimited</td>
+                                </tr>
+                                <tr>
+                                    <td>Max Trip Duration</td>
+                                    <td>3 days</td>
+                                    <td>7 days</td>
+                                    <td>7 days</td>
+                                </tr>
+                                <tr>
+                                    <td>Max Travelers</td>
+                                    <td>2</td>
+                                    <td>10</td>
+                                    <td>20</td>
+                                </tr>
+                                <tr>
+                                    <td>AI Model</td>
+                                    <td>GPT-3.5</td>
+                                    <td>GPT-4</td>
+                                    <td>GPT-4</td>
+                                </tr>
+                                <tr>
+                                    <td>PDF Export</td>
+                                    <td><i class="fas fa-times text-danger"></i></td>
+                                    <td><i class="fas fa-check text-success"></i></td>
+                                    <td><i class="fas fa-check text-success"></i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-time Usage Stats -->
+        <div class="col-md-12 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title h5 mb-0">Real-time Usage Statistics</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Tier</th>
+                                    <th>Active Users</th>
+                                    <th>Total Itineraries Today</th>
+                                    <th>Avg. Duration</th>
+                                    <th>Avg. Group Size</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for tier in usage_stats %}
+                                <tr>
+                                    <td>{{ tier.name }}</td>
+                                    <td>{{ tier.active_users }}</td>
+                                    <td>{{ tier.daily_itineraries }}</td>
+                                    <td>{{ tier.avg_duration }} days</td>
+                                    <td>{{ tier.avg_group_size }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Access Violations -->
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title h5 mb-0">Recent Access Violations</h3>
+                </div>
+                <div class="card-body">
+                    {% if violations %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>User</th>
+                                    <th>Subscription</th>
+                                    <th>Violation Type</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for violation in violations %}
+                                <tr>
+                                    <td>{{ violation.timestamp }}</td>
+                                    <td>{{ violation.user_email }}</td>
+                                    <td>{{ violation.subscription }}</td>
+                                    <td>{{ violation.type }}</td>
+                                    <td>{{ violation.details }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted mb-0">No recent violations recorded.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

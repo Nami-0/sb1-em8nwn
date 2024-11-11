@@ -1,0 +1,43 @@
+<ul class="navbar-nav me-auto">
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main_views.itinerary_form') }}">Create Itinerary</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main_views.flights') }}">Flights</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main_views.accommodations') }}">Accommodations</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main_views.news') }}">Travel News</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ url_for('main_views.pricing') }}">Pricing</a>
+    </li>
+</ul>
+<ul class="navbar-nav">
+    {% if current_user.is_authenticated %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="fas fa-user-circle me-1"></i>{{ current_user.username }}
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <a class="dropdown-item" href="{{ url_for('main_views.profile') }}">
+                        <i class="fas fa-id-card me-2"></i>Profile
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a class="dropdown-item" href="{{ url_for('google_auth.logout') }}">
+                        <i class="fas fa-sign-out-alt me-2"></i>Logout
+                    </a>
+                </li>
+            </ul>
+        </li>
+    {% else %}
+        <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('google_auth.login') }}">Login with Google</a>
+        </li>
+    {% endif %}
+</ul>

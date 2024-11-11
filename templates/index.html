@@ -1,0 +1,318 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10 text-center">
+            <h1 class="display-4 mb-3">Plan Smarter, Travel Better with AI</h1>
+            <p class="lead mb-5">Join thousands of Asia Pacific travelers saving time and money with personalized AI travel planning</p>
+            
+            <!-- Call to Action Section -->
+            <div class="cta-section mb-5 py-4">
+                <h2 class="h2 mb-3">Start Your Journey Today</h2>
+                <p class="lead mb-4">Create your first AI-powered travel itinerary in minutes</p>
+                
+                {% if current_user.is_authenticated %}
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a href="{{ url_for('main_views.itinerary_form') }}" class="btn btn-primary btn-lg px-4 py-3">
+                        <i class="fas fa-plane-departure me-2"></i>Create Itinerary
+                    </a>
+                </div>
+                {% else %}
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a href="{{ url_for('google_auth.login') }}" class="btn btn-primary btn-lg px-4 py-3">
+                        <i class="fas fa-rocket me-2"></i>Try for Free
+                    </a>
+                    <a href="{{ url_for('main_views.about') }}" class="btn btn-outline-light btn-lg px-4 py-3">
+                        <i class="fas fa-info-circle me-2"></i>See How It Works
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Feature Cards -->
+            <div class="row g-4 justify-content-center mb-5">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-calculator fa-2x text-primary mb-3"></i>
+                            <h3 class="h5">Smart Budget Planning</h3>
+                            <p class="card-text">Get detailed cost breakdowns for your entire trip, from flights to local transport</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-route fa-2x text-primary mb-3"></i>
+                            <h3 class="h5">Personalized Itineraries</h3>
+                            <p class="card-text">AI-powered travel plans tailored to your interests and preferences</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-utensils fa-2x text-primary mb-3"></i>
+                            <h3 class="h5">Dietary Preferences</h3>
+                            <p class="card-text">From restaurant to hawker, we find food that caters to your needs</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-users fa-2x text-primary mb-3"></i>
+                            <h3 class="h5">Community Insights</h3>
+                            <p class="card-text">Learn from fellow travelers' experiences and recommendations</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-plane fa-2x text-primary mb-3"></i>
+                            <h3 class="h5">Flight Tracking</h3>
+                            <p class="card-text">Find and track the best flight deals for your travel dates</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <i class="fas fa-hotel fa-2x text-primary mb-3"></i>
+                            <h3 class="h5">Accommodation Search</h3>
+                            <p class="card-text">Discover the perfect place to stay from multiple booking platforms</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Section -->
+            <div class="statistics-section mb-5">
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: APAC Travel Market Report 2024">
+                            <div class="stat-number">75%</div>
+                            <div class="stat-description">of Asia Pacific travelers use traditional agencies</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: APAC Tourism Industry Analysis 2024">
+                            <div class="stat-number">30%</div>
+                            <div class="stat-description">average markup on APAC travel packages</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: Travel Buddy Asia Internal Data 2024">
+                            <div class="stat-number">45%</div>
+                            <div class="stat-description">save on travel costs with AI planning</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="stat-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: UNWTO Asia Pacific Tourism Report 2024">
+                            <div class="stat-number">55%</div>
+                            <div class="stat-description">of Asia Pacific population yet to travel internationally</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Country Breakdown Section -->
+            <div class="country-breakdown-section mb-5">
+                <h2 class="h3 mb-4">Discover Asia Pacific Travel Insights</h2>
+                <div class="row g-4">
+                    <!-- Malaysia -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="country-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: Tourism Malaysia Report 2024">
+                            <div class="country-icon">
+                                <i class="fas fa-flag me-2"></i>Malaysia
+                            </div>
+                            <div class="stat-list">
+                                <div class="stat-item">
+                                    <span class="stat-value">65%</span> agency bookings
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">35%</span> package markup
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">50%</span> yet to travel
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Indonesia -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="country-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: Indonesian Tourism Board 2024">
+                            <div class="country-icon">
+                                <i class="fas fa-flag me-2"></i>Indonesia
+                            </div>
+                            <div class="stat-list">
+                                <div class="stat-item">
+                                    <span class="stat-value">70%</span> agency bookings
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">28%</span> package markup
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">60%</span> yet to travel
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Thailand -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="country-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: TAT Intelligence Center 2024">
+                            <div class="country-icon">
+                                <i class="fas fa-flag me-2"></i>Thailand
+                            </div>
+                            <div class="stat-list">
+                                <div class="stat-item">
+                                    <span class="stat-value">72%</span> agency bookings
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">32%</span> package markup
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">45%</span> yet to travel
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Japan -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="country-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: JNTO Statistics 2024">
+                            <div class="country-icon">
+                                <i class="fas fa-flag me-2"></i>Japan
+                            </div>
+                            <div class="stat-list">
+                                <div class="stat-item">
+                                    <span class="stat-value">55%</span> agency bookings
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">25%</span> package markup
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">30%</span> yet to travel
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Philippines -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="country-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: Philippine Tourism Survey 2024">
+                            <div class="country-icon">
+                                <i class="fas fa-flag me-2"></i>Philippines
+                            </div>
+                            <div class="stat-list">
+                                <div class="stat-item">
+                                    <span class="stat-value">78%</span> agency bookings
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">30%</span> package markup
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">65%</span> yet to travel
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- India -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="country-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: India Tourism Statistics 2024">
+                            <div class="country-icon">
+                                <i class="fas fa-flag me-2"></i>India
+                            </div>
+                            <div class="stat-list">
+                                <div class="stat-item">
+                                    <span class="stat-value">82%</span> agency bookings
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">35%</span> package markup
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">70%</span> yet to travel
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Cambodia -->
+                    <div class="col-md-6 col-lg-3">
+                        <div class="country-card" data-bs-toggle="tooltip" data-bs-placement="top" title="Source: Cambodia Tourism Report 2024">
+                            <div class="country-icon">
+                                <i class="fas fa-flag me-2"></i>Cambodia
+                            </div>
+                            <div class="stat-list">
+                                <div class="stat-item">
+                                    <span class="stat-value">80%</span> agency bookings
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">30%</span> package markup
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-value">75%</span> yet to travel
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APAC Region Section -->
+            <div class="apac-section mb-5 py-4">
+                <h2 class="h2 mb-4">Transform Your Travel Experience Across Asia Pacific</h2>
+                <div class="row g-4">
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card">
+                            <i class="fas fa-globe-asia fa-2x text-primary mb-3"></i>
+                            <h3 class="h5">Multi-Destination Coverage</h3>
+                            <p>Expert insights across 8+ APAC destinations, from vibrant cities to hidden gems</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card">
+                            <i class="fas fa-robot fa-2x text-primary mb-3"></i>
+                            <h3 class="h5">AI-Powered Planning</h3>
+                            <p>Smart itineraries that adapt to your preferences and travel style</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card">
+                            <i class="fas fa-piggy-bank fa-2x text-primary mb-3"></i>
+                            <h3 class="h5">Market-Specific Savings</h3>
+                            <p>Save up to 45% with local insights and real-time pricing data</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <div class="feature-card">
+                            <i class="fas fa-hands fa-2x text-primary mb-3"></i>
+                            <h3 class="h5">Cultural Intelligence</h3>
+                            <p>Travel with confidence with locale-specific cultural insights</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-5">
+                    <a href="{{ url_for('main_views.itinerary_form') }}" class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-plane-departure me-2"></i>Plan Your APAC Adventure
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize all tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+{% endblock %}
+
+{% endblock %}
